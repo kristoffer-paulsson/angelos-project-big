@@ -1,12 +1,8 @@
 # Acknowledgement
 
-Most algorithmic code are only ports with minor adaptions
-to the Angelos Project implementation of a BigInteger (BigInt).
+Most of the algorithmic code is only ports with minor adaptations to the Angelos Project™ implementation of a BigInteger (BigInt). 
 
-The following persons are not affiliated nor endorse this
-implementation but are credited to have authored the
-original algorithmic code in history that later has been 
-ported.
+The following persons are not affiliated with nor do they endorse this implementation but are credited with having authored the original algorithmic code in history that was later ported.
 
 * Per Bothner
 * Michael McCloskey

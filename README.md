@@ -3,49 +3,7 @@
 
 A high-quality arbitrary-precision big integer library implemented in pure Kotlin/Common for effective multiplatform support.
 
-## Features
-
-### Core Arithmetic Operations
-- Addition, subtraction, multiplication, and division with remainder
-- Square root calculation with remainder support
-- Greatest Common Divisor (GCD) computation
-- Modular arithmetic (Mod, Pow)
-- Random number generation
-
-### Bit Manipulation
-- Bitwise operations (AND, OR, XOR, NOT, AND-NOT)
-- Bit shifting (left/right)
-- Individual bit operations (set, clear, flip, test)
-- Bit length and bit count calculations
-
-### Advanced Features
-- Multi-platform support through Kotlin Multiplatform
-- Efficient big-endian integer array representation
-- Comprehensive fuzzing test suite for operation validation
-- Serialization/deserialization support
-- Unsigned operations handling
-- Exception handling through BigMathException
-
-### Performance Optimizations
-- Specialized magnitude handling
-- Efficient carry propagation in arithmetic operations
-- Optimized division algorithm
-- Smart memory management
-
-## Quality Assurance
-
-### Fuzzing Coverage
-The library includes extensive fuzzing tests for core operations:
-- Arithmetic operations (addition, multiplication, division)
-- Bit manipulations (shifts, AND, OR, XOR)
-- Conversion operations (to/from Long)
-- Special operations (abs, max, pow)
-
-### Testing
-- Comprehensive unit test suite
-- Property-based testing
-- Java BigInteger compatibility tests
-- Cross-platform validation
+It covers all necessary features for descent cryptographic use such as implementing ECDSA (not included).
 
 ## Usage
 
@@ -59,6 +17,10 @@ For use in a Kotlin/Multiplatform project, or compatible, publish the library to
 
 Run `./gradlew clean build allTests` for unit tests.
 
+Fuzzing covers all math operations and is designed to run for up to 2 minutes without crashing in compatibility mode 
+against Java BigInteger. The fuzzer generates random inputs and validating the results against expected outcome, the 
+same Java, thereby fully compatible. To run the fuzzer use IntelliJ IDEA and click the green arrow fron withing the
+Fuzzer*.kt files found in the `:jazzer` module.
 
 ## Getting help
 
