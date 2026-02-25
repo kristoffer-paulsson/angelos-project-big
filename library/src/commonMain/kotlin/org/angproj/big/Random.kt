@@ -23,6 +23,7 @@ import org.angproj.sec.rand.JitterEntropy
 import org.angproj.sec.stat.bitStatisticOf
 import org.angproj.sec.stat.cryptoHealthCheck
 import org.angproj.sec.stat.securityHealthCheck
+import org.angproj.sec.util.Octet.asHexSymbols
 import kotlin.math.max
 
 internal fun BigInt.Companion.innerCreateBigint(bitLength: Int, random: (ByteArray) -> Unit): BigInt {
@@ -37,7 +38,7 @@ internal fun BigInt.Companion.innerCreateBigint(bitLength: Int, random: (ByteArr
         if(!bitStatisticOf(randomBytes).securityHealthCheck()) {
             random(randomBytes) // Attempt a second time, else the security is compromised.
             ensure<SecureRandomException>(bitStatisticOf(randomBytes).securityHealthCheck()) {
-                SecureRandomException("Random generation failed security health checks")
+                SecureRandomException("Random generation failed security health checks. Sample: ${randomBytes.asHexSymbols()}")
             }
         }
         var pos = 0
