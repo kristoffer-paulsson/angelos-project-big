@@ -14,47 +14,18 @@
  */
 package org.angproj.big
 
-import org.angproj.sec.SecureFeed
-import org.angproj.sec.SecureRandomException
 import org.angproj.sec.util.TypeSize
 import org.angproj.sec.util.ceilDiv
 import org.angproj.sec.util.ensure
-import org.angproj.sec.rand.JitterEntropy
-import org.angproj.sec.stat.bitStatisticOf
-import org.angproj.sec.stat.cryptoHealthCheck
-import org.angproj.sec.stat.securityHealthCheck
-import org.angproj.sec.util.Octet.asHexSymbols
-import kotlin.math.max
+import org.angproj.sec.util.securelyEntropize
+import org.angproj.sec.util.securelyRandomize
 
 internal fun BigInt.Companion.innerCreateBigint(bitLength: Int, random: (ByteArray) -> Unit): BigInt {
     ensure(bitLength in 0..4096) { BigMathException("Bit length must be between 0 and 4096 bits (1Kb)") }
-    val randomBytes = ByteArray(1024)
-    val sampleBytes = ByteArray(bitLength.ceilDiv(TypeSize.byteBits)+4)
-    val testBytes = ByteArray(max(sampleBytes.size, 32))
-    var success = false
+    val randomBytes = ByteArray(bitLength.ceilDiv(TypeSize.byteBits)+4)
 
-    do {
-        random(randomBytes)
-        if(!bitStatisticOf(randomBytes).securityHealthCheck()) {
-            random(randomBytes) // Attempt a second time, else the security is compromised.
-            ensure<SecureRandomException>(bitStatisticOf(randomBytes).securityHealthCheck()) {
-                SecureRandomException("Random generation failed security health checks. Sample: ${randomBytes.asHexSymbols()}")
-            }
-        }
-        var pos = 0
-        do {
-            if(randomBytes.size - pos >= testBytes.size) {
-                randomBytes.copyInto(testBytes, 0, 0, testBytes.size)
-                if(bitStatisticOf(testBytes).cryptoHealthCheck()) {
-                    randomBytes.copyInto(sampleBytes, 0, 0, sampleBytes.size)
-                    success = true
-                }
-                pos += testBytes.size
-            }
-        } while (!success)
-    } while (!success)
-
-    val value = bigIntOf(sampleBytes).abs()
+    random(randomBytes)
+    val value = bigIntOf(randomBytes).abs()
     val valueBitLength = value.bitLength
 
     return when {
@@ -80,7 +51,7 @@ internal fun BigInt.Companion.innerCreateInRange(min: BigInt, max: BigInt, rando
  */
 public fun BigInt.Companion.createEntropyBigInt(bitLength: Int): BigInt {
     return innerCreateBigint(bitLength) {
-        JitterEntropy.readBytes(it, 0, it.size) { index, value -> it[index] = value }
+        it.securelyEntropize()
     }
 }
 
@@ -94,7 +65,7 @@ public fun BigInt.Companion.createEntropyBigInt(bitLength: Int): BigInt {
  */
 public fun BigInt.Companion.createEntropyInRange(min: BigInt, max: BigInt): BigInt {
     return innerCreateInRange(min, max) {
-        JitterEntropy.readBytes(it, 0, it.size) { index, value -> it[index] = value }
+        it.securelyEntropize()
     }
 }
 
@@ -107,7 +78,7 @@ public fun BigInt.Companion.createEntropyInRange(min: BigInt, max: BigInt): BigI
  */
 public fun BigInt.Companion.createRandomBigInt(bitLength: Int): BigInt {
     return innerCreateBigint(bitLength) {
-        SecureFeed.readBytes(it, 0, it.size) { index, value -> it[index] = value }
+        it.securelyRandomize()
     }
 }
 
@@ -121,6 +92,6 @@ public fun BigInt.Companion.createRandomBigInt(bitLength: Int): BigInt {
  */
 public fun BigInt.Companion.createRandomInRange(min: BigInt, max: BigInt): BigInt {
     return innerCreateInRange(min, max) {
-        SecureFeed.readBytes(it, 0, it.size) { index, value -> it[index] = value }
+        it.securelyRandomize()
     }
 }
