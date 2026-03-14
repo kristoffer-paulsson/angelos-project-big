@@ -20,7 +20,7 @@ import kotlin.test.assertContentEquals
 import java.math.BigInteger as JavaBigInteger
 
 class LoadBitcoinEccTest {
-    abstract class Secpp256Koblitz1 {
+    abstract class Secp256Koblitz1 {
         val p: String = "FFFFFFFF" + "FFFFFFFF" + "FFFFFFFF" + "FFFFFFFF" +
                 "FFFFFFFF" + "FFFFFFFF" + "FFFFFFFE" + "FFFFFC2F"
         val a: String = "00000000" + "00000000" + "00000000" + "00000000" +
@@ -42,7 +42,7 @@ class LoadBitcoinEccTest {
 
     @Test
     fun testLoadP() {
-        val curve = object : Secpp256Koblitz1() {}
+        val curve = object : Secp256Koblitz1() {}
 
         assertContentEquals(
             unsignedBigIntOf(curve.p.fromHexSymbols()).toByteArray(),
@@ -52,7 +52,7 @@ class LoadBitcoinEccTest {
 
     @Test
     fun testLoadA() {
-        val curve = object : Secpp256Koblitz1() {}
+        val curve = object : Secp256Koblitz1() {}
 
         assertContentEquals(
             unsignedBigIntOf(curve.a.fromHexSymbols()).toByteArray(),
@@ -61,7 +61,7 @@ class LoadBitcoinEccTest {
     }
     @Test
     fun testLoadB() {
-        val curve = object : Secpp256Koblitz1() {}
+        val curve = object : Secp256Koblitz1() {}
 
         assertContentEquals(
             unsignedBigIntOf(curve.b.fromHexSymbols()).toByteArray(),
@@ -71,7 +71,7 @@ class LoadBitcoinEccTest {
 
     @Test
     fun testLoadGc() {
-        val curve = object : Secpp256Koblitz1() {}
+        val curve = object : Secp256Koblitz1() {}
 
         assertContentEquals(
             unsignedBigIntOf(curve.Gc.fromHexSymbols()).toByteArray(),
@@ -81,7 +81,7 @@ class LoadBitcoinEccTest {
 
     @Test
     fun testLoadG() {
-        val curve = object : Secpp256Koblitz1() {}
+        val curve = object : Secp256Koblitz1() {}
 
         assertContentEquals(
             unsignedBigIntOf(curve.G.fromHexSymbols()).toByteArray(),
@@ -91,7 +91,7 @@ class LoadBitcoinEccTest {
 
     @Test
     fun testLoadN() {
-        val curve = object : Secpp256Koblitz1() {}
+        val curve = object : Secp256Koblitz1() {}
 
         assertContentEquals(
             unsignedBigIntOf(curve.n.fromHexSymbols()).toByteArray(),
@@ -101,7 +101,7 @@ class LoadBitcoinEccTest {
 
     @Test
     fun testLoadH() {
-        val curve = object : Secpp256Koblitz1() {}
+        val curve = object : Secp256Koblitz1() {}
 
         assertContentEquals(
             unsignedBigIntOf(curve.h.fromHexSymbols()).toByteArray(),
