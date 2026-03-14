@@ -18,6 +18,7 @@ kotlin {
     sourceSets {
         jvmMain.dependencies {
             api(project(":library"))
+            implementation("org.angproj.sec:angelos-project-secrand:0.12.6")
             implementation(libs.kotlin.test)
             implementation(libs.kotlin.jazzer)
             implementation(libs.kotlin.jazzer.api)
