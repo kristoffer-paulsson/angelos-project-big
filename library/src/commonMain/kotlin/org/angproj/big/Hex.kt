@@ -27,15 +27,17 @@ import org.angproj.sec.util.ceilDiv
 public fun String.fromHexSymbols(): ByteArray {
     if (isEmpty()) return byteArrayOf()
 
-    val odd = length % 2 == 1
-    val byteLen = length.ceilDiv(2) //(length + if (odd) 1 else 0) / 2
+    val odd = length % 2
+    val byteLen = length.ceilDiv(2)
     val bytes = ByteArray(byteLen)
 
-    var strIdx = if (odd) -1 else 0
-    repeat(byteLen) {
-        val high = if (strIdx < 0) 0 else fromHexChar<Unit>(this[strIdx].code)
+    if(odd == 1) bytes[0] = fromHexChar<Unit>(this[0].code).toByte()
+
+    var strIdx = odd
+    repeat(byteLen - odd) {
+        val high = fromHexChar<Unit>(this[strIdx].code)
         val low = fromHexChar<Unit>(this[strIdx + 1].code)
-        bytes[it] = ((high shl 4) or low).toByte()
+        bytes[it+odd] = ((high shl 4) or low).toByte()
         strIdx += 2
     }
     return bytes
