@@ -43,7 +43,7 @@ public fun BigInt.shiftLeft(n: Int): BigInt = when {
     else -> BigInt.innerShiftRight(-n, this)
 }
 
-public fun BigInt.Companion.innerShiftLeft(n: Int, x: BigInt): BigInt {
+internal fun BigInt.Companion.innerShiftLeft(n: Int, x: BigInt): BigInt {
     val nInts = n ushr 5
     val nBits = n and 0x1f
     val mag = x.mag

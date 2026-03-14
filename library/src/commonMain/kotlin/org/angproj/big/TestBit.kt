@@ -26,7 +26,7 @@ import org.angproj.sec.util.ensure
  * */
 public fun BigInt.testBit(pos: Int): Boolean = BigInt.innerTestBit(this.mag, this.sigNum, pos)
 
-public fun BigInt.Companion.innerTestBit(x: IntArray, xSig: BigSigned, pos: Int): Boolean {
+internal fun BigInt.Companion.innerTestBit(x: IntArray, xSig: BigSigned, pos: Int): Boolean {
     ensure(pos >= 0) { BigMathException("Can not flip an imaginary bit at a negative position.") }
 
     val xnz = x.firstNonzero()

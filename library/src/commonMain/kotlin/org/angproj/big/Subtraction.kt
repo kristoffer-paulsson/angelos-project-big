@@ -47,7 +47,7 @@ public fun BigInt.subtract(value: BigInt): BigInt = when {
     else -> ExportImportBigInt.internalOf(BigInt.innerSubtract(this.mag, this.sigNum, value.mag, value.sigNum))
 }
 
-public fun BigInt.Companion.innerSubtract(
+internal fun BigInt.Companion.innerSubtract(
     x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned
 ): IntArray {
     val xnz = x.firstNonzero()

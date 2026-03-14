@@ -33,7 +33,7 @@ import kotlin.math.max
 public fun BigInt.setBit(pos: Int): BigInt = BigInt.innerSetBit(this.mag, this.sigNum, pos).valueOf()
 
 
-public fun BigInt.Companion.innerSetBit(x: IntArray, xSig: BigSigned, pos: Int): IntArray {
+internal fun BigInt.Companion.innerSetBit(x: IntArray, xSig: BigSigned, pos: Int): IntArray {
     ensure(pos >= 0) { BigMathException("Can not flip an imaginary bit at a negative position.") }
 
     val bigCnt = pos.floorDiv(TypeSize.intBits)

@@ -1,8 +1,6 @@
 package org.angproj.big
 
 import org.angproj.sec.SecureRandomException
-import org.angproj.sec.util.Octet.asHexSymbols
-import org.angproj.sec.util.securelyRandomize
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -45,7 +45,7 @@ public fun BigInt.shiftRight(n: Int): BigInt = when {
 }
 
 
-public fun BigInt.Companion.innerShiftRight(n: Int, x: BigInt): BigInt {
+internal fun BigInt.Companion.innerShiftRight(n: Int, x: BigInt): BigInt {
     val nInts = n ushr 5
     val nBits = n and 0x1f
     val mag = x.mag

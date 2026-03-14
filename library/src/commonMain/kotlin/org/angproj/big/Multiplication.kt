@@ -41,7 +41,7 @@ public fun BigInt.multiply(value: BigInt): BigInt = when {
     )
 }
 
-public fun BigInt.Companion.innerMultiply(x: IntArray, y: IntArray): IntArray {
+internal fun BigInt.Companion.innerMultiply(x: IntArray, y: IntArray): IntArray {
     val xRev = x.rev(0)
     val yRev = y.rev(0)
 
@@ -61,7 +61,7 @@ public fun BigInt.Companion.innerMultiply(x: IntArray, y: IntArray): IntArray {
     return z
 }
 
-public fun BigInt.Companion.innerMultiplication(x: IntArray, y: IntArray): IntArray {
+internal fun BigInt.Companion.innerMultiplication(x: IntArray, y: IntArray): IntArray {
     val xRev = x.rev(0)
 
     val z = IntArray(x.size + y.size)

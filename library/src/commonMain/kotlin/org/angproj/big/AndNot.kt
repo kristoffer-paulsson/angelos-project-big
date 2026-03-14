@@ -32,7 +32,7 @@ public infix fun BigInt.andNot(value: BigInt): BigInt = BigInt.innerAndNot(
     mag, sigNum, value.mag, value.sigNum).valueOf()
 
 
-public fun BigInt.Companion.innerAndNot(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
+internal fun BigInt.Companion.innerAndNot(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
     val xnz = x.firstNonzero()
     val ynz = y.firstNonzero()
 

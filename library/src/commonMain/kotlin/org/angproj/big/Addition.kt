@@ -52,7 +52,7 @@ public fun BigInt.add(value: BigInt): BigInt = when {
     }
 }
 
-public fun BigInt.Companion.innerAdd(
+internal fun BigInt.Companion.innerAdd(
     x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned
 ): IntArray {
     val xnz = x.firstNonzero()

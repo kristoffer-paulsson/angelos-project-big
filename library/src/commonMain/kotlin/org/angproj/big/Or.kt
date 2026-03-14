@@ -31,7 +31,7 @@ import kotlin.math.max
 public infix fun BigInt.or(value: BigInt): BigInt = BigInt.innerOr(mag, sigNum, value.mag, value.sigNum).valueOf()
 
 
-public fun BigInt.Companion.innerOr(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
+internal fun BigInt.Companion.innerOr(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
     val xnz = x.firstNonzero()
     val ynz = y.firstNonzero()
 

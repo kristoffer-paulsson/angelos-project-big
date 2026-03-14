@@ -31,7 +31,7 @@ public fun BigInt.compareSpecial(other: BigInt): BigCompare = when {
     else -> BigCompare.EQUAL
 }
 
-public fun BigInt.Companion.innerCompareMagnitude(left: IntArray, right: IntArray): BigCompare = when {
+internal fun BigInt.Companion.innerCompareMagnitude(left: IntArray, right: IntArray): BigCompare = when {
     left.size < right.size -> BigCompare.LESSER
     left.size > right.size -> BigCompare.GREATER
     else -> {
