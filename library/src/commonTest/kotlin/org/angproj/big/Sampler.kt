@@ -20,17 +20,17 @@ import org.angproj.sec.rand.InitializationVector
 
 
 object Sampler {
-    fun abtractByteArray(size: Int, seed: Long = 0): ByteArray {
-        var state = InitializationVector.entries[0].iv xor seed
+    fun abstractByteArray(size: Int, seed: Long = 0): ByteArray {
+        var state = -(InitializationVector.entries[0].iv xor seed).inv() * 5
         return ByteArray(size) {
             state = -state.inv() * 5
-            state.toByte()
+            (state ushr 32).toByte()
         }
     }
 
     fun abstractBigInt(bitLength: Int, seed: Long = 0): BigInt {
         require(bitLength >= 0) { "Must be more than negative bits long" }
-        val value = bigIntOf(abtractByteArray(bitLength.ceilDiv(TypeSize.byteBits)+4, seed)).abs()
+        val value = bigIntOf(abstractByteArray(bitLength.ceilDiv(TypeSize.byteBits)+4, seed)).abs()
         val valueBitLength = value.bitLength
 
         return when {

@@ -1,11 +1,14 @@
 package org.angproj.big
 
 import org.angproj.sec.SecureRandomException
+import org.angproj.sec.util.Octet.asHexSymbols
 import org.angproj.sec.util.securelyRandomize
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
 
 class RandomTest {
 
@@ -27,81 +30,121 @@ class RandomTest {
         }
     }
 
-    /*@Test
-    fun testCreateEntropyBigInt() {
-        (0 until 256).forEach {
-            val rand = BigInt.createEntropyBigInt(it)
-            //println(rand.toByteArray().toHexString(HexFormat.Default))
-            assertEquals(rand.bitLength, it)
+    @Test
+    fun testCreateBigIntOutside() {
+
+        assertFailsWith<BigMathException>{
+            BigInt.innerCreateBigint(4097) {
+                Random.nextBytes(it)
+            }
+        }
+        assertFailsWith<BigMathException>{
+            BigInt.innerCreateBigint(-1) {
+                Random.nextBytes(it)
+            }
         }
     }
 
     @Test
-    fun testCreateEntropyInRange() {
-        (0 until 128).forEach {
-            val min = BigInt.createEntropyBigInt(it).negate()
-            val max = min.subtract(BigInt.minusOne)
-            val inBetween = BigInt.createEntropyInRange(min, max)
-            //println(BinHex.encodeToHex(inBetween.toByteArray()))
-            assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
-            assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
-        }
+    fun testCreateBigIntInside() {
+        assertNotEquals(BigInt.createMockBigInt(4096), BigInt.createMockBigInt(0))
+    }
 
-        (0 until 128).forEach {
-            val min = BigInt.createEntropyBigInt(it).negate()
-            val max = min.add(BigInt.one)
-            val inBetween = BigInt.createEntropyInRange(min, max)
-            //println(BinHex.encodeToHex(inBetween.toByteArray()))
-            assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
-            assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
+    @Test
+    fun testEnsureCatastrophicFailure() {
+        assertFailsWith<SecureRandomException>{
+            BigInt.innerCreateBigint(256) {
+                it.fill(0)
+            }
         }
+    }
 
-        (0 until 128).forEach {
-            val min = BigInt.createEntropyBigInt(it)
-            val max = min.add(BigInt.one)
-            val inBetween = BigInt.createEntropyInRange(min, max)
-            //println(BinHex.encodeToHex(inBetween.toByteArray()))
-            assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
-            assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
+    @Test
+    fun testRandomTrulyFailed() {
+        assertFailsWith<BigMathException> {
+            BigInt.innerCreateBigint(256) {
+                it.fill(-1)
+            }
         }
+    }
+
+    @Test
+    fun testRangeMinMaxCheck() {
+        assertFailsWith<BigMathException>{
+            BigInt.innerCreateInRange(
+                Sampler.abstractBigInt(192),
+                Sampler.abstractBigInt(128)
+            ) {
+                it.fill(58)
+            }
+        }
+    }
+
+    @Test
+    fun testRangeMinMax() {
+        BigInt.innerCreateInRange(
+            Sampler.abstractBigInt(128),
+            Sampler.abstractBigInt(192)
+        ) {
+            it.fill(-37)
+        }
+    }
+
+    @Test
+    fun testCreateEntropyBigInt() {
+        val rand = BigInt.createEntropyBigInt(192)
+
+        assertEquals(rand.bitLength, 192)
+    }
+
+    @Test
+    fun testCreateEntropyInRangePositive() {
+
+        val min = Sampler.abstractBigInt(129)
+        val max = min.subtract(BigInt.minusOne)
+        val inBetween = BigInt.createEntropyInRange(min, max)
+
+        assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
+        assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
+    }
+
+    @Test
+    fun testCreateEntropyInRangeNegative() {
+        val min = Sampler.abstractBigInt(129).negate()
+        val max = min.add(BigInt.one)
+
+        val inBetween = BigInt.createEntropyInRange(min, max)
+
+        assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
+        assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
     }
 
     @Test
     fun testCreateRandomBigInt() {
-        (0 until 256).forEach {
-            val rand = BigInt.createRandomBigInt(it)
-            //println(BinHex.encodeToHex(rand.toByteArray()))
-            assertEquals(rand.bitLength, it)
-        }
+        val rand = BigInt.createRandomBigInt(192)
+
+        assertEquals(rand.bitLength, 192)
     }
 
     @Test
-    fun testCreateRandomInRange() {
-        (0 until 128).forEach {
-            val min = BigInt.createRandomBigInt(it).negate()
-            val max = min.subtract(BigInt.minusOne)
-            val inBetween = BigInt.createRandomInRange(min, max)
-            //println(BinHex.encodeToHex(inBetween.toByteArray()))
-            assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
-            assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
-        }
+    fun testCreateRandomInRangePositive() {
 
-        (0 until 128).forEach {
-            val min = BigInt.createRandomBigInt(it).negate()
-            val max = min.add(BigInt.one)
-            val inBetween = BigInt.createRandomInRange(min, max)
-            //println(BinHex.encodeToHex(inBetween.toByteArray()))
-            assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
-            assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
-        }
+        val min = Sampler.abstractBigInt(129)
+        val max = min.subtract(BigInt.minusOne)
+        val inBetween = BigInt.createRandomInRange(min, max)
 
-        (0 until 128).forEach {
-            val min = BigInt.createRandomBigInt(it)
-            val max = min.add(BigInt.one)
-            val inBetween = BigInt.createRandomInRange(min, max)
-            //println(BinHex.encodeToHex(inBetween.toByteArray()))
-            assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
-            assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
-        }
-    }*/
+        assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
+        assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
+    }
+
+    @Test
+    fun testCreateRandomInRangeNegative() {
+        val min = Sampler.abstractBigInt(129).negate()
+        val max = min.add(BigInt.one)
+
+        val inBetween = BigInt.createRandomInRange(min, max)
+
+        assertTrue { min.compareSpecial(inBetween).isLesserOrEqual() }
+        assertTrue { max.compareSpecial(inBetween).isGreaterOrEqual() }
+    }
 }
