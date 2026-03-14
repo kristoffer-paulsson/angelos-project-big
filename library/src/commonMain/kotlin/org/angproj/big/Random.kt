@@ -14,6 +14,7 @@
  */
 package org.angproj.big
 
+import org.angproj.sec.SecureRandomException
 import org.angproj.sec.util.TypeSize
 import org.angproj.sec.util.ceilDiv
 import org.angproj.sec.util.ensure
@@ -24,14 +25,17 @@ internal fun BigInt.Companion.innerCreateBigint(bitLength: Int, random: (ByteArr
     ensure(bitLength in 0..4096) { BigMathException("Bit length must be between 0 and 4096 bits (1Kb)") }
     val randomBytes = ByteArray(bitLength.ceilDiv(TypeSize.byteBits)+4)
 
+    val hashCode = randomBytes.contentHashCode()
     random(randomBytes)
+    ensure(hashCode != randomBytes.contentHashCode()) {
+        SecureRandomException("Catastrophic failure of 2nd degree: Nothing generated while generating secure random bytes.") }
     val value = bigIntOf(randomBytes).abs()
     val valueBitLength = value.bitLength
 
     return when {
         valueBitLength == bitLength -> value
         valueBitLength > bitLength -> value.shiftRight(valueBitLength - bitLength)
-        else -> ensure{ BigMathException("Random truly failed") }
+        else -> ensure { BigMathException("Random truly failed") }
     }
 }
 
