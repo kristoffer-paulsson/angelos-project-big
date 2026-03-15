@@ -265,53 +265,23 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
 
 internal fun divWord(n: Long, d: Int): Long {
     val dLong = d.longMask()
-    var r: Long
-    var q: Long
-    /*if (dLong == 1L) {
-        q = n.toInt().toLong()
-        r = 0
-        return r shl Int.SIZE_BITS or (q and 0xffffffffL)
-    }*/
 
-    q = (n ushr 1) / (dLong ushr 1)
-    r = n - q * dLong
+    var q: Long = (n ushr 1) / (dLong ushr 1)
+    var r: Long = n - q * dLong
 
     while (r < 0) {
         r += dLong
         q--
     }
-    /*while (r >= dLong) {
-        r -= dLong
-        q++
-    }*/
     return r shl Int.SIZE_BITS or (q and 0xffffffffL)
 }
 
 internal fun rightShift(value: IntArray, n: Int): IntArray {
-    if (value.size == 0) return value
     val nInts = n ushr 5
     val nBits = n and 0x1F
     val value2 = value.copyOf(value.size - nInts)
-    if (nBits == 0) return value2
-    //val bitsInHighWord = Int.SIZE_BITS - value2[0].countLeadingZeroBits()
-    //return if (nBits >= bitsInHighWord) {
-        return primitiveLeftShift(value2, Int.SIZE_BITS - nBits).copyOf(value.lastIndex)
-    /*} else {
-        primitiveRightShift(value2, nBits)
-    }*/
+    return primitiveLeftShift(value2, Int.SIZE_BITS - nBits).copyOf(value.lastIndex)
 }
-
-/*internal fun primitiveRightShift(value: IntArray, n: Int): IntArray {
-    val n2 = Int.SIZE_BITS - n
-    var c = value[value.lastIndex]
-    (value.lastIndex downTo 1).forEach { idx ->
-        val b = c
-        c = value[idx - 1]
-        value[idx] = c shl n2 or (b ushr n)
-    }
-    value[0] = value[0] ushr n
-    return value
-}*/
 
 internal fun primitiveLeftShift(value: IntArray, n: Int): IntArray {
     val n2 = Int.SIZE_BITS - n
