@@ -14,6 +14,7 @@
  */
 package org.angproj.big
 
+import org.angproj.sec.util.Octet.asHexSymbols
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -79,5 +80,18 @@ class ShiftRightTest {
     fun testMagnitudeIfZero() {
         assertSame(BigInt.zero, BigInt.zero.shiftRight(53))
         assertContentEquals(BigInt.zero.toByteArray(), BigInt.zero.shiftRight(53).toByteArray())
+    }
+
+    @Test
+    fun testArbitraryRightShift() {
+        val fuzz = listOf(
+            Triple("ff260a0aff260a0abb2727272727", 42, "c98282bfc98282ae")
+        )
+
+        fuzz.forEach {
+            val result = bigIntOf(it.first.fromHexSymbols()).shiftRight(it.second).toByteArray()
+            //println(result.asHexSymbols())
+            assertEquals(result.asHexSymbols(), it.third)
+        }
     }
 }
