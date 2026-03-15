@@ -254,8 +254,8 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
 internal fun divWord(dividend: Long, divisor: Long): Long {
     if (dividend >= 0) {
         val q = (dividend / divisor).toInt()
-        val rem = (dividend - q * divisor).toInt()
-        return rem.toLong() shl Int.SIZE_BITS or (q.toLong() and 0xffffffffL)
+        val r = (dividend - q * divisor).toInt()
+        return r.toLong() shl Int.SIZE_BITS or q.longMask()
     } else {
         var q: Long = (dividend ushr 1) / (divisor ushr 1)
         var r: Long = dividend - q * divisor
@@ -269,10 +269,10 @@ internal fun divWord(dividend: Long, divisor: Long): Long {
 }
 
 internal fun rightShift(value: IntArray, n: Int): IntArray {
-    val nInts = n ushr 5
-    val nBits = n and 0x1F
-    val value2 = value.copyOf(value.size - nInts)
-    return primitiveLeftShift(value2, Int.SIZE_BITS - nBits).copyOf(value.lastIndex)
+    return primitiveLeftShift(
+        value.copyOf(value.size - (n ushr 5)),
+        Int.SIZE_BITS - (n and 0x1F)
+    ).copyOf(value.lastIndex)
 }
 
 internal fun primitiveLeftShift(value: IntArray, n: Int): IntArray {
@@ -323,6 +323,3 @@ internal fun divAdd(a: IntArray, result: IntArray, offset: Int): Int {
     }
     return carry.toInt()
 }
-
-internal fun Long.upperInt(): Int = (this ushr Int.SIZE_BITS).toInt()
-internal fun Long.lowerInt(): Int = (this and 0xffffffffL).toInt()
