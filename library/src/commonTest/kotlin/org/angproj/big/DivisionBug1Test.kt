@@ -53,6 +53,7 @@ class DivisionBug1Test {
 
     @OptIn(ExperimentalStdlibApi::class)
     private val faultList = listOf(
+        Pair<ByteArray, ByteArray>("01fffffa2dffff7373737373aeffff7d".hexToByteArray(), "0a".hexToByteArray()),
         Pair<ByteArray, ByteArray>("040000000000000000000009ffffffff".hexToByteArray(), "ff2eff00ff".hexToByteArray()),
         Pair<ByteArray, ByteArray>("ffffffffffff30ff0b0100a5ffffffff".hexToByteArray(), "ff30ff0b0100a5ffff".hexToByteArray()),
         Pair<ByteArray, ByteArray>("7eb00000f7f7f7f7f7f7f7f7f7f7f7f7".hexToByteArray(), "f7f7f7f7f7f7f7f7f7f7f7".hexToByteArray()),
