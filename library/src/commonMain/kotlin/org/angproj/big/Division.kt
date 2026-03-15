@@ -267,11 +267,11 @@ internal fun divWord(n: Long, d: Int): Long {
     val dLong = d.longMask()
     var r: Long
     var q: Long
-    if (dLong == 1L) {
+    /*if (dLong == 1L) {
         q = n.toInt().toLong()
         r = 0
         return r shl Int.SIZE_BITS or (q and 0xffffffffL)
-    }
+    }*/
 
     q = (n ushr 1) / (dLong ushr 1)
     r = n - q * dLong
@@ -280,10 +280,10 @@ internal fun divWord(n: Long, d: Int): Long {
         r += dLong
         q--
     }
-    while (r >= dLong) {
+    /*while (r >= dLong) {
         r -= dLong
         q++
-    }
+    }*/
     return r shl Int.SIZE_BITS or (q and 0xffffffffL)
 }
 

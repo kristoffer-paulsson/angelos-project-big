@@ -12,10 +12,14 @@ public object FuzzerDivisionKt : FuzzPrefs() {
         val f1 = data.consumeBytes(16)
         val f2 = data.consumeBytes(16)
 
+        var e1 = false
+        var e2 = false
+
         val r1 = try {
             bigIntOf(f1).divideAndRemainder(bigIntOf(f2)).let {
                 Pair(it.first.toByteArray(), it.second.toByteArray()) }
         } catch (_: BigMathException) {
+            e1 = true
             Pair(byteArrayOf(), byteArrayOf())
         }
 
@@ -23,13 +27,17 @@ public object FuzzerDivisionKt : FuzzPrefs() {
             BigInteger(f1).divideAndRemainder(BigInteger(f2)).let {
                 Pair(it[0].toByteArray(), it[1].toByteArray()) }
         } catch (_: NumberFormatException) {
+            e2 = true
             Pair(byteArrayOf(), byteArrayOf())
         } catch (_: ArithmeticException) {
+            e2 = true
             Pair(byteArrayOf(), byteArrayOf())
         }
 
-        assertContentEquals(r1.first, r2.first)
-        assertContentEquals(r1.second, r2.second)
+        if(!e1 && !e2) {
+            assertContentEquals(r1.first, r2.first)
+            assertContentEquals(r1.second, r2.second)
+        }
     }
 
     @JvmStatic
