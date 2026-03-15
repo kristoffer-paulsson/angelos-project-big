@@ -293,15 +293,15 @@ internal fun rightShift(value: IntArray, n: Int): IntArray {
     val nBits = n and 0x1F
     val value2 = value.copyOf(value.size - nInts)
     if (nBits == 0) return value2
-    val bitsInHighWord = Int.SIZE_BITS - value2[0].countLeadingZeroBits()
-    return if (nBits >= bitsInHighWord) {
-        primitiveLeftShift(value2, Int.SIZE_BITS - nBits).copyOf(value.lastIndex)
-    } else {
+    //val bitsInHighWord = Int.SIZE_BITS - value2[0].countLeadingZeroBits()
+    //return if (nBits >= bitsInHighWord) {
+        return primitiveLeftShift(value2, Int.SIZE_BITS - nBits).copyOf(value.lastIndex)
+    /*} else {
         primitiveRightShift(value2, nBits)
-    }
+    }*/
 }
 
-internal fun primitiveRightShift(value: IntArray, n: Int): IntArray {
+/*internal fun primitiveRightShift(value: IntArray, n: Int): IntArray {
     val n2 = Int.SIZE_BITS - n
     var c = value[value.lastIndex]
     (value.lastIndex downTo 1).forEach { idx ->
@@ -311,7 +311,7 @@ internal fun primitiveRightShift(value: IntArray, n: Int): IntArray {
     }
     value[0] = value[0] ushr n
     return value
-}
+}*/
 
 internal fun primitiveLeftShift(value: IntArray, n: Int): IntArray {
     val n2 = Int.SIZE_BITS - n
