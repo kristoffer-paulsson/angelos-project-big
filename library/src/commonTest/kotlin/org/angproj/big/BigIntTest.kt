@@ -45,4 +45,16 @@ class BigIntTest {
     @Test
     fun testUnsignedBigIntOf() {
     }
+
+    @Test
+    fun testArbitraryBitCount() {
+        val fuzz = listOf(
+            Pair("a20100000000000000", 68)
+        )
+
+        fuzz.forEach {
+            val bitCount = bigIntOf(it.first.fromHexSymbols()).bitCount
+            assertEquals(bitCount, it.second)
+        }
+    }
 }
