@@ -243,9 +243,14 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
         }
         val borrow = carry.toInt()
 
-
         if (borrow + -0x80000000 > nh2) {
-            divAdd(sorArr, remArr, idx + 1)
+            val idx2 = idx + 1
+            carry = 0
+            (sorArr.lastIndex downTo 0).forEach { idx3 ->
+                val sum: Long = sorArr[idx3].longMask() + remArr[idx3 + idx2].longMask() + carry
+                remArr[idx3 + idx2] = sum.toInt()
+                carry = sum ushr Int.SIZE_BITS
+            }
             qhat--
         }
 
@@ -302,14 +307,4 @@ internal fun copyAndShift(
         dst[dstFrom + i] = b shl shift or (c ushr n2)
     }
     dst[dstFrom + srcLen - 1] = c shl shift
-}
-
-internal fun divAdd(a: IntArray, result: IntArray, offset: Int): Int {
-    var carry: Long = 0
-    (a.lastIndex downTo 0).forEach { idx ->
-        val sum: Long = a[idx].longMask() + result[idx + offset].longMask() + carry
-        result[idx + offset] = sum.toInt()
-        carry = sum ushr Int.SIZE_BITS
-    }
-    return carry.toInt()
 }
