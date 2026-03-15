@@ -149,9 +149,8 @@ internal fun divideOneWord(
             idx - 1, dividendSig, dividendNz
         ).longMask()
         val tmp = divWord(dendEst, sorLong)
-        var q: Int = (tmp and 0xffffffffL).toInt()
         rem = (tmp ushr Int.SIZE_BITS).toInt()
-        quotient.intSet(idx - 1, q)
+        quotient.intSet(idx - 1, (tmp and 0xffffffffL).toInt())
         remLong = rem.longMask()
     }
 
@@ -235,7 +234,15 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
         }
 
         remArr[idx] = 0
-        val borrow = mulSub(remArr, sorArr, qhat, sorLen, idx)
+        var carry: Long = 0
+        (sorLen - 1 downTo 0).forEach { idx2 ->
+            val prod: Long = sorArr[idx2].longMask() * qhat.longMask() + carry
+            val diff = remArr[idx + idx2 + 1] - prod
+            remArr[idx + idx2 + 1] = diff.toInt()
+            carry = (prod ushr Int.SIZE_BITS) + (if ((diff and 0xffffffffL) > (prod.inv() and 0xffffffffL)) 1 else 0)
+        }
+        val borrow = carry.toInt()
+
 
         if (borrow + -0x80000000 > nh2) {
             divAdd(sorArr, remArr, idx + 1)
@@ -247,7 +254,7 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
 
     return Pair(
         quotArr,
-        if (shift > 0) rightShift(remArr, shift) else remArr
+        if (shift > 0) primitiveShift(remArr, shift) else remArr
     )
 }
 
@@ -268,7 +275,7 @@ internal fun divWord(dividend: Long, divisor: Long): Long {
     }
 }
 
-internal fun rightShift(input: IntArray, n: Int): IntArray {
+internal fun primitiveShift(input: IntArray, n: Int): IntArray {
     val n2 = Int.SIZE_BITS - (n and 0x1F)
     val n3 = Int.SIZE_BITS - n2
     val value = input.copyOf(input.size - (n2 ushr 5))
@@ -295,18 +302,6 @@ internal fun copyAndShift(
         dst[dstFrom + i] = b shl shift or (c ushr n2)
     }
     dst[dstFrom + srcLen - 1] = c shl shift
-}
-
-internal fun mulSub(q: IntArray, a: IntArray, x: Int, len: Int, offset: Int): Int {
-    var carry: Long = 0
-    (len - 1 downTo 0).forEach { idx ->
-        val prod: Long = a[idx].longMask() * x.longMask() + carry
-        val diff = q[offset + idx + 1] - prod
-        q[offset + idx + 1] = diff.toInt()
-        carry = (prod ushr Int.SIZE_BITS) + (
-                if ((diff and 0xffffffffL) > (prod.inv() and 0xffffffffL)) 1 else 0)
-    }
-    return carry.toInt()
 }
 
 internal fun divAdd(a: IntArray, result: IntArray, offset: Int): Int {
