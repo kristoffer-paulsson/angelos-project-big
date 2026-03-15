@@ -268,23 +268,18 @@ internal fun divWord(dividend: Long, divisor: Long): Long {
     }
 }
 
-internal fun rightShift(value: IntArray, n: Int): IntArray {
-    return primitiveLeftShift(
-        value.copyOf(value.size - (n ushr 5)),
-        Int.SIZE_BITS - (n and 0x1F)
-    ).copyOf(value.lastIndex)
-}
-
-internal fun primitiveLeftShift(value: IntArray, n: Int): IntArray {
-    val n2 = Int.SIZE_BITS - n
+internal fun rightShift(input: IntArray, n: Int): IntArray {
+    val n2 = Int.SIZE_BITS - (n and 0x1F)
+    val n3 = Int.SIZE_BITS - n2
+    val value = input.copyOf(input.size - (n2 ushr 5))
     var c = value[0]
     (0 until value.lastIndex).forEach { idx ->
         val b = c
         c = value[idx + 1]
-        value[idx] = b shl n or (c ushr n2)
+        value[idx] = b shl n2 or (c ushr n3)
     }
-    value[value.lastIndex] = value[value.lastIndex] shl n
-    return value
+    value[value.lastIndex] = value[value.lastIndex] shl n2
+    return value.copyOf(input.lastIndex)
 }
 
 internal fun copyAndShift(
