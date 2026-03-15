@@ -264,6 +264,7 @@ internal fun divWord(dividend: Long, divisor: Long): Long = when {
         val r = (dividend - q * divisor).toInt()
         r.toLong() shl Int.SIZE_BITS or q.longMask()
     }
+
     else -> {
         var q: Long = (dividend ushr 1) / (divisor ushr 1)
         var r: Long = dividend - q * divisor
@@ -272,7 +273,7 @@ internal fun divWord(dividend: Long, divisor: Long): Long = when {
             r += divisor
             q--
         }
-        
+
         r shl Int.SIZE_BITS or (q and 0xffffffffL)
     }
 }

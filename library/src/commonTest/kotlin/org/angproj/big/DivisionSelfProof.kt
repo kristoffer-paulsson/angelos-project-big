@@ -14,9 +14,9 @@
  */
 package org.angproj.big
 
-import org.angproj.sec.SecureRandom
 import org.angproj.sec.util.floorMod
 import kotlin.math.absoluteValue
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -37,8 +37,8 @@ class DivisionSelfProof {
     private val loops = 1
 
     fun generateRanges() {
-        shortBits = SecureRandom.readInt().absoluteValue.floorMod(maxShort)
-        longBits = SecureRandom.readInt().absoluteValue.floorMod(maxLong - shortBits) + shortBits
+        shortBits = Random.nextInt().absoluteValue.floorMod(maxShort)
+        longBits = Random.nextInt().absoluteValue.floorMod(maxLong - shortBits) + shortBits
     }
 
 
