@@ -258,12 +258,13 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
     )
 }
 
-internal fun divWord(dividend: Long, divisor: Long): Long {
-    if (dividend >= 0) {
+internal fun divWord(dividend: Long, divisor: Long): Long = when {
+    dividend >= 0 -> {
         val q = (dividend / divisor).toInt()
         val r = (dividend - q * divisor).toInt()
-        return r.toLong() shl Int.SIZE_BITS or q.longMask()
-    } else {
+        r.toLong() shl Int.SIZE_BITS or q.longMask()
+    }
+    else -> {
         var q: Long = (dividend ushr 1) / (divisor ushr 1)
         var r: Long = dividend - q * divisor
 
@@ -271,7 +272,8 @@ internal fun divWord(dividend: Long, divisor: Long): Long {
             r += divisor
             q--
         }
-        return r shl Int.SIZE_BITS or (q and 0xffffffffL)
+        
+        r shl Int.SIZE_BITS or (q and 0xffffffffL)
     }
 }
 
