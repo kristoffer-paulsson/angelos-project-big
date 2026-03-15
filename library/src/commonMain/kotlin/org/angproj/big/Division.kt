@@ -148,15 +148,9 @@ internal fun divideOneWord(
         val dendEst = remLong shl Int.SIZE_BITS or dividend.intGetComp(
             idx - 1, dividendSig, dividendNz
         ).longMask()
-        var q: Int
-        if (dendEst >= 0) {
-            q = (dendEst / sorLong).toInt()
-            rem = (dendEst - q * sorLong).toInt()
-        } else {
-            val tmp = divWord(dendEst, sorInt)
-            q = (tmp and 0xffffffffL).toInt()
-            rem = (tmp ushr Int.SIZE_BITS).toInt()
-        }
+        val tmp = divWord(dendEst, sorLong)
+        var q: Int = (tmp and 0xffffffffL).toInt()
+        rem = (tmp ushr Int.SIZE_BITS).toInt()
         quotient.intSet(idx - 1, q)
         remLong = rem.longMask()
     }
@@ -220,14 +214,9 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
             skipCorrection = qrem + -0x80000000 < nh2
         } else {
             val nChunk = nh.toLong() shl Int.SIZE_BITS or nm.longMask()
-            if (nChunk >= 0) {
-                qhat = (nChunk / sorHighLong).toInt()
-                qrem = (nChunk - qhat * sorHighLong).toInt()
-            } else {
-                val tmp = divWord(nChunk, sorHigh)
-                qhat = (tmp and 0xffffffffL).toInt()
-                qrem = (tmp ushr Int.SIZE_BITS).toInt()
-            }
+            val tmp = divWord(nChunk, sorHighLong)
+            qhat = (tmp and 0xffffffffL).toInt()
+            qrem = (tmp ushr Int.SIZE_BITS).toInt()
         }
         if (qhat == 0) return@forEach
         if (!skipCorrection) {
@@ -262,18 +251,21 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
     )
 }
 
+internal fun divWord(dividend: Long, divisor: Long): Long {
+    if (dividend >= 0) {
+        val q = (dividend / divisor).toInt()
+        val rem = (dividend - q * divisor).toInt()
+        return rem.toLong() shl Int.SIZE_BITS or (q.toLong() and 0xffffffffL)
+    } else {
+        var q: Long = (dividend ushr 1) / (divisor ushr 1)
+        var r: Long = dividend - q * divisor
 
-internal fun divWord(n: Long, d: Int): Long {
-    val dLong = d.longMask()
-
-    var q: Long = (n ushr 1) / (dLong ushr 1)
-    var r: Long = n - q * dLong
-
-    while (r < 0) {
-        r += dLong
-        q--
+        while (r < 0) {
+            r += divisor
+            q--
+        }
+        return r shl Int.SIZE_BITS or (q and 0xffffffffL)
     }
-    return r shl Int.SIZE_BITS or (q and 0xffffffffL)
 }
 
 internal fun rightShift(value: IntArray, n: Int): IntArray {
@@ -331,3 +323,6 @@ internal fun divAdd(a: IntArray, result: IntArray, offset: Int): Int {
     }
     return carry.toInt()
 }
+
+internal fun Long.upperInt(): Int = (this ushr Int.SIZE_BITS).toInt()
+internal fun Long.lowerInt(): Int = (this and 0xffffffffL).toInt()
