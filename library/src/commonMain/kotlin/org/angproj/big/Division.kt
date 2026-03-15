@@ -79,6 +79,7 @@ public fun BigInt.divideAndRemainder(
                 value.sigNum != this.sigNum -> Pair(BigInt.minusOne, BigInt.zero)
                 else -> Pair(BigInt.one, BigInt.zero)
             }
+
             else -> {
                 val qabs = this.abs()
                 val vabs = value.abs()
@@ -87,6 +88,7 @@ public fun BigInt.divideAndRemainder(
                         qabs.mag, qabs.sigNum,
                         vabs.mag, vabs.sigNum
                     )
+
                     else -> divideMagnitude(qabs.mag, vabs.mag)
                 }
                 Pair(
@@ -112,12 +114,14 @@ internal fun divideOneWord(
     val divisorNz = divisor.firstNonzero()
 
     val sorLong = divisor.intGetComp(
-        divisor.lastIndex, divisorSig, divisorNz).longMask()
+        divisor.lastIndex, divisorSig, divisorNz
+    ).longMask()
     val sorInt = sorLong.toInt()
 
     if (dividend.size == 1) {
         val dendValue: Long = dividend.intGetComp(
-            dividend.lastIndex, dividendSig, dividendNz).longMask()
+            dividend.lastIndex, dividendSig, dividendNz
+        ).longMask()
         val q = (dendValue / sorLong)
         val r = (dendValue - q * sorLong)
         return Pair(
@@ -129,7 +133,8 @@ internal fun divideOneWord(
 
     val shift: Int = sorInt.countLeadingZeroBits()
     var rem: Int = dividend.intGetCompUnrev(
-        0, dividendSig, dividendNz)
+        0, dividendSig, dividendNz
+    )
     var remLong = rem.longMask()
     if (remLong < sorLong) {
         quotient[0] = 0
@@ -141,7 +146,8 @@ internal fun divideOneWord(
 
     (dividend.lastIndex downTo 1).forEach { idx ->
         val dendEst = remLong shl Int.SIZE_BITS or dividend.intGetComp(
-            idx - 1, dividendSig, dividendNz).longMask()
+            idx - 1, dividendSig, dividendNz
+        ).longMask()
         var q: Int
         if (dendEst >= 0) {
             q = (dendEst / sorLong).toInt()
@@ -157,7 +163,7 @@ internal fun divideOneWord(
 
     return Pair(
         quotient,
-        intArrayOf(if(shift > 0) rem % sorInt else rem)
+        intArrayOf(if (shift > 0) rem % sorInt else rem)
     )
 }
 
@@ -167,16 +173,20 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
     val sorLen = divisor.size
     val sorArr: IntArray = when {
         shift > 0 -> IntArray(divisor.size).also {
-            copyAndShift(divisor, 0, divisor.size, it, 0, shift) }
+            copyAndShift(divisor, 0, divisor.size, it, 0, shift)
+        }
+
         else -> divisor.copyOfRange(0, divisor.size)
     }
     val remArr: IntArray = when {
         shift <= 0 -> IntArray(dividend.size + 1).also { arr ->
             dividend.copyInto(arr, 1, 0, dividend.size)
         }
+
         dividend[0].countLeadingZeroBits() >= shift -> IntArray(dividend.size + 1).also { arr ->
             copyAndShift(dividend, 0, arr.lastIndex, arr, 1, shift)
         }
+
         else -> IntArray(dividend.size + 2).also { arr ->
             var c = 0
             val n2 = Int.SIZE_BITS - shift

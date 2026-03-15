@@ -28,7 +28,7 @@ public fun BigInt.inv(): BigInt = not()
  */
 public fun BigInt.not(): BigInt = BigInt.innerNot(mag, sigNum).valueOf()
 
-internal fun BigInt.Companion.innerNot(x: IntArray, xSig: BigSigned,): IntArray {
+internal fun BigInt.Companion.innerNot(x: IntArray, xSig: BigSigned): IntArray {
     val xnz = x.firstNonzero()
     val result = IntArray(x.intLength(xSig))
 

@@ -29,7 +29,8 @@ import kotlin.math.max
  * @return A new [BigInt] representing the result of the AND operation.
  */
 public infix fun BigInt.and(value: BigInt): BigInt = BigInt.innerAnd(
-    mag, sigNum, value.mag, value.sigNum).valueOf()
+    mag, sigNum, value.mag, value.sigNum
+).valueOf()
 
 
 internal fun BigInt.Companion.innerAnd(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {

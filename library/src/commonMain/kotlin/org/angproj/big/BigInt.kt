@@ -31,7 +31,7 @@ package org.angproj.big
 public data class BigInt(
     public val mag: IntArray,
     public val sigNum: BigSigned
-): Comparable<BigInt> {
+) : Comparable<BigInt> {
 
     override fun equals(other: Any?): Boolean {
         if (other == null) return false

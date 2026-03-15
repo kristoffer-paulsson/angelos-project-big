@@ -20,9 +20,13 @@ import org.angproj.sec.util.ensure
 
 public fun Int.longMask(): Long = this.toLong() and 0xFFFFFFFFL
 
-public fun IntArray.longSet(index: Int, value: Long) { this[lastIndex - index] = value.toInt() }
+public fun IntArray.longSet(index: Int, value: Long) {
+    this[lastIndex - index] = value.toInt()
+}
 
-public fun IntArray.intSet(index: Int, value: Int) { this[lastIndex - index] = value }
+public fun IntArray.intSet(index: Int, value: Int) {
+    this[lastIndex - index] = value
+}
 
 public fun IntArray.intGet(index: Int): Int = this[lastIndex - index]
 
@@ -32,11 +36,11 @@ public fun IntArray.intLength(sigNum: BigSigned): Int = LoadAndSaveBigInt.intLen
 
 public fun IntArray.intGetComp(
     index: Int, sigNum: BigSigned, firstNonZero: Int
-): Int = LoadAndSaveBigInt.getInt(index, this,  sigNum, firstNonZero)
+): Int = LoadAndSaveBigInt.getInt(index, this, sigNum, firstNonZero)
 
 public fun IntArray.intGetCompUnrev(
     index: Int, sigNum: BigSigned, firstNonZero: Int
-): Int = LoadAndSaveBigInt.getIntUnrev(index, this,  sigNum, firstNonZero)
+): Int = LoadAndSaveBigInt.getIntUnrev(index, this, sigNum, firstNonZero)
 
 public fun IntArray.rev(index: Int): Int = this.lastIndex - index
 
@@ -61,11 +65,12 @@ public object LoadAndSaveBigInt {
                         i++
                     }
 
-                    when(pow2) {
-                        true -> magBitLength -1
+                    when (pow2) {
+                        true -> magBitLength - 1
                         else -> magBitLength
                     }
                 }
+
                 else -> magBitLength
             }
         }
@@ -91,7 +96,9 @@ public object LoadAndSaveBigInt {
     public fun firstNonZeroIntNum(mag: IntArray): Int {
         val mlen: Int = mag.size
         var i: Int = mlen - 1
-        while (i >= 0 && mag[i] == 0) { i-- }
+        while (i >= 0 && mag[i] == 0) {
+            i--
+        }
         return mlen - i - 1
     }
 
@@ -155,8 +162,11 @@ public object LoadAndSaveBigInt {
         var index = 1
 
         while (octet == BigSigned.POSITIVE.signed && index < size) {
-            octet = data.readOctet(index++).toInt() }
-        if (octet == 0) { return intArrayOf() }
+            octet = data.readOctet(index++).toInt()
+        }
+        if (octet == 0) {
+            return intArrayOf()
+        }
 
         val result = IntArray((size - index).div(4) + 1)
 
@@ -166,7 +176,7 @@ public object LoadAndSaveBigInt {
         }
         result[0] = first
 
-        repeat ((size - index).div(4)) {
+        repeat((size - index).div(4)) {
             result[it + 1] = (data.readOctet(index++).toInt() shl 24) or
                     ((data.readOctet(index++).toInt() and 0xff) shl 16) or
                     ((data.readOctet(index++).toInt() and 0xff) shl 8) or
@@ -182,7 +192,8 @@ public object LoadAndSaveBigInt {
         var index = 1
 
         while (octet == BigSigned.NEGATIVE.signed && index < size) {
-            octet = data.readOctet(index++).toInt() }
+            octet = data.readOctet(index++).toInt()
+        }
 
         var first = -1 shl 8 or (octet and 0xFF)
         repeat((size - index).mod(4)) {
@@ -192,7 +203,8 @@ public object LoadAndSaveBigInt {
         val realSize = index
 
         while (octet == BigSigned.POSITIVE.signed && index < size) {
-            octet = data.readOctet(index++).toInt() }
+            octet = data.readOctet(index++).toInt()
+        }
 
         var second = octet and 0xFF
         repeat((size - index).mod(4)) {
@@ -205,28 +217,31 @@ public object LoadAndSaveBigInt {
         var idx = result.size - (size - index).div(4)
         if (idx > 1) result[idx - 1] = second
 
-        repeat ((size - index).div(4)) {
+        repeat((size - index).div(4)) {
             result[idx++] = (data.readOctet(index++).toInt() shl 24) or
                     ((data.readOctet(index++).toInt() and 0xff) shl 16) or
                     ((data.readOctet(index++).toInt() and 0xff) shl 8) or
                     (data.readOctet(index++).toInt() and 0xff)
         }
 
-        while (--idx >= 0 && result[idx] == 0) { Unit }
+        while (--idx >= 0 && result[idx] == 0) {
+        }
         result[idx] = -result[idx]
-        while (--idx >= 0) { result[idx] = result[idx].inv() }
+        while (--idx >= 0) {
+            result[idx] = result[idx].inv()
+        }
         return result
     }
 
-    public fun <E> internalOf(data: E, size: Int, readOctet: E.(i: Int) -> Byte) : BigInt {
+    public fun <E> internalOf(data: E, size: Int, readOctet: E.(i: Int) -> Byte): BigInt {
         ensure(size > 0) { BigMathException("Zero length magnitude") }
 
         val firstOctet = data.readOctet(0).toInt()
-        return when(firstOctet < 0) {
+        return when (firstOctet < 0) {
             true -> BigInt(makePositive(firstOctet, data, size, readOctet), BigSigned.NEGATIVE)
             else -> {
                 val mag = stripLeadingZeroBytes(firstOctet, data, size, readOctet)
-                BigInt(mag, if(mag.isEmpty()) BigSigned.ZERO else BigSigned.POSITIVE)
+                BigInt(mag, if (mag.isEmpty()) BigSigned.ZERO else BigSigned.POSITIVE)
             }
         }
     }

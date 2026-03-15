@@ -61,9 +61,9 @@ internal fun BigInt.Companion.innerShiftRight(n: Int, x: BigInt): BigInt {
         newMag = x.mag.copyOf(newMagLen)
     } else {
         val highBits: Int = mag[0] ushr nBits
-        val extra = if(highBits != 0) 1 else 0
+        val extra = if (highBits != 0) 1 else 0
         newMag = IntArray(newMagLast + extra)
-        if(extra == 1) newMag[0] = highBits
+        if (extra == 1) newMag[0] = highBits
         var idx = newMagLast
         (newMag.lastIndex downTo extra).forEach {
             newMag[it] = (mag[idx--] ushr nBits) or (mag[idx] shl nBitsInv)
@@ -74,13 +74,17 @@ internal fun BigInt.Companion.innerShiftRight(n: Int, x: BigInt): BigInt {
         var onesLost = false
         var i = magLen - 1
         val j = newMagLen
-        while (i >= j && !onesLost) { onesLost = mag[i--] != 0 }
+        while (i >= j && !onesLost) {
+            onesLost = mag[i--] != 0
+        }
         if (!onesLost && nBits != 0) onesLost = (mag[newMagLast] shl nBitsInv != 0)
         if (onesLost) {
             onesLost = false
             // DO NOT USE newMagLen OR newMagLast BELOW HERE
             var k = newMag.lastIndex
-            while (k >= 0 && !onesLost) { newMag[k] += 1; onesLost = newMag[k--] != 0 }
+            while (k >= 0 && !onesLost) {
+                newMag[k] += 1; onesLost = newMag[k--] != 0
+            }
             if (!onesLost) newMag = IntArray(newMag.size + 1).also { it[0] = 1 }
         }
     }

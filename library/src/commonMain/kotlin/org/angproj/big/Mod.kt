@@ -20,5 +20,5 @@ import org.angproj.sec.util.ensure
 public fun BigInt.mod(value: BigInt): BigInt {
     ensure(value.sigNum.isPositive()) { BigMathException("Modulus must be positive.") }
     val result = remainder(value)
-    return if(result.sigNum.isNonNegative()) result else result.add(value)
+    return if (result.sigNum.isNonNegative()) result else result.add(value)
 }

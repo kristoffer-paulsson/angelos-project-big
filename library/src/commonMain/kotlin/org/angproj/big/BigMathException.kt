@@ -14,4 +14,4 @@
  */
 package org.angproj.big
 
-public class BigMathException(message: String = ""): RuntimeException(message)
+public class BigMathException(message: String = "") : RuntimeException(message)

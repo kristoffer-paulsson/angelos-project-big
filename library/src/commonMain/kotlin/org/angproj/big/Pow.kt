@@ -25,7 +25,7 @@ import org.angproj.sec.util.ensure
  * @throws BigMathException if the exponent is negative or if the exponent is too large for memory.
  */
 public fun BigInt.pow(exponent: Int): BigInt = when {
-    exponent < 0 -> ensure{ BigMathException("Exponent can not be negative") }
+    exponent < 0 -> ensure { BigMathException("Exponent can not be negative") }
     exponent == 0 -> BigInt.one
     exponent == 1 -> this
     sigNum.isZero() -> this
@@ -39,16 +39,16 @@ public fun BigInt.pow(exponent: Int): BigInt = when {
 internal fun BigInt.Companion.innerPower(base: BigInt, exponent: Int): BigInt {
     var rest = exponent
     var total = BigInt.zero
-    while(rest > 1) {
+    while (rest > 1) {
         var square = base
         val pow2 = LoadAndSaveBigInt.bitLengthForInt(rest)
-        rest = (rest and (1 shl pow2-1).inv())
-        (0 until pow2-1).forEach { _ -> square = square.multiply(square) }
-        total = when(total.sigNum.isZero()) {
-            false -> (total.multiply(square) )
+        rest = (rest and (1 shl pow2 - 1).inv())
+        (0 until pow2 - 1).forEach { _ -> square = square.multiply(square) }
+        total = when (total.sigNum.isZero()) {
+            false -> (total.multiply(square))
             else -> square
         }
     }
-    if(rest == 1) total = (total * base)
+    if (rest == 1) total = (total * base)
     return total
 }

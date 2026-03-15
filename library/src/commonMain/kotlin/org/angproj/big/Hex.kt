@@ -31,19 +31,19 @@ public fun String.fromHexSymbols(): ByteArray {
     val byteLen = length.ceilDiv(2)
     val bytes = ByteArray(byteLen)
 
-    if(odd == 1) bytes[0] = fromHexChar<Unit>(this[0].code).toByte()
+    if (odd == 1) bytes[0] = fromHexChar<Unit>(this[0].code).toByte()
 
     var strIdx = odd
     repeat(byteLen - odd) {
         val high = fromHexChar<Unit>(this[strIdx].code)
         val low = fromHexChar<Unit>(this[strIdx + 1].code)
-        bytes[it+odd] = ((high shl 4) or low).toByte()
+        bytes[it + odd] = ((high shl 4) or low).toByte()
         strIdx += 2
     }
     return bytes
 }
 
-private inline fun<reified E: Any> fromHexChar(c: Int): Int = when(c) {
+private inline fun <reified E : Any> fromHexChar(c: Int): Int = when (c) {
     in 0x30..0x39 -> c - 0x30 // 0-9
     in 0x61..0x66 -> 10 + c - 0x61 // a-f
     in 0x41..0x46 -> 10 + c - 0x41 // A-F

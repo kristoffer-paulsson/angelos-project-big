@@ -30,8 +30,11 @@ public object Unsigned {
         var index = 1
 
         while (octet == BigSigned.POSITIVE.signed && index < size) {
-            octet = data.readOctet(index++).toInt() }
-        if (octet == 0) { return intArrayOf() }
+            octet = data.readOctet(index++).toInt()
+        }
+        if (octet == 0) {
+            return intArrayOf()
+        }
 
         val result = IntArray((size - index).div(4) + 1)
 
@@ -41,7 +44,7 @@ public object Unsigned {
         }
         result[0] = first
 
-        repeat ((size - index).div(4)) {
+        repeat((size - index).div(4)) {
             result[it + 1] = (data.readOctet(index++).toInt() shl 24) or
                     ((data.readOctet(index++).toInt() and 0xff) shl 16) or
                     ((data.readOctet(index++).toInt() and 0xff) shl 8) or
@@ -59,11 +62,11 @@ public object Unsigned {
      * */
     public fun internalOf(bytes: ByteArray): BigInt = internalOf(bytes, bytes.size) { this[it] }
 
-    public fun <E> internalOf(data: E, size: Int, readOctet: E.(i: Int) -> Byte) : BigInt {
+    public fun <E> internalOf(data: E, size: Int, readOctet: E.(i: Int) -> Byte): BigInt {
         ensure(size > 0) { BigMathException("Zero length magnitude") }
 
         val firstOctet = data.readOctet(0).toInt()
         val mag = stripLeadingZeroBytes(firstOctet, data, size, readOctet)
-        return BigInt(mag, if(mag.isEmpty()) BigSigned.ZERO else BigSigned.POSITIVE)
+        return BigInt(mag, if (mag.isEmpty()) BigSigned.ZERO else BigSigned.POSITIVE)
     }
 }

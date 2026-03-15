@@ -15,21 +15,17 @@
 package org.angproj.big
 
 import org.angproj.sec.SecureRandomException
-import org.angproj.sec.util.Octet.asHexSymbols
-import org.angproj.sec.util.TypeSize
-import org.angproj.sec.util.ceilDiv
-import org.angproj.sec.util.ensure
-import org.angproj.sec.util.securelyEntropize
-import org.angproj.sec.util.securelyRandomize
+import org.angproj.sec.util.*
 
 internal fun BigInt.Companion.innerCreateBigint(bitLength: Int, random: (ByteArray) -> Unit): BigInt {
     ensure(bitLength in 0..4096) { BigMathException("Bit length must be between 0 and 4096 bits (4Kb)") }
-    val randomBytes = ByteArray(bitLength.ceilDiv(TypeSize.byteBits)+4)
+    val randomBytes = ByteArray(bitLength.ceilDiv(TypeSize.byteBits) + 4)
 
     val hashCode = randomBytes.contentHashCode()
     random(randomBytes)
     ensure(hashCode != randomBytes.contentHashCode()) {
-        SecureRandomException("Catastrophic failure of 2nd degree: Nothing generated while generating secure random bytes.") }
+        SecureRandomException("Catastrophic failure of 2nd degree: Nothing generated while generating secure random bytes.")
+    }
     val value = bigIntOf(randomBytes).abs()
     val valueBitLength = value.bitLength
 

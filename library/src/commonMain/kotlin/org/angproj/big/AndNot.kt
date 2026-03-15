@@ -29,7 +29,8 @@ import kotlin.math.max
  * @return A new [BigInt] representing the result of the AND NOT operation.
  */
 public infix fun BigInt.andNot(value: BigInt): BigInt = BigInt.innerAndNot(
-    mag, sigNum, value.mag, value.sigNum).valueOf()
+    mag, sigNum, value.mag, value.sigNum
+).valueOf()
 
 
 internal fun BigInt.Companion.innerAndNot(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {

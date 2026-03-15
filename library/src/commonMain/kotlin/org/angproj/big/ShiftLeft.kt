@@ -56,12 +56,12 @@ internal fun BigInt.Companion.innerShiftLeft(n: Int, x: BigInt): BigInt {
     } else {
         val nBitsRev = TypeSize.intBits - nBits
         val highBits = mag[0] ushr nBitsRev
-        val extra = if(highBits != 0) 1 else 0
+        val extra = if (highBits != 0) 1 else 0
         newMag = IntArray(magLen + nInts + extra)
-        if(extra == 1) newMag[0] = highBits
+        if (extra == 1) newMag[0] = highBits
         val magLast = mag.lastIndex
         (0 until magLast).forEach {
-            newMag[it + extra] = (mag[it] shl nBits) or (mag[it+1] ushr nBitsRev)
+            newMag[it + extra] = (mag[it] shl nBits) or (mag[it + 1] ushr nBitsRev)
         }
         newMag[magLast + extra] = mag[magLast] shl nBits
     }
