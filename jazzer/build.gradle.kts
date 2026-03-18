@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.androidLibrary)
 }
 
-group = "org.angproj.big"
-version = "1.0-SNAPSHOT"
 
 kotlin {
     explicitApi()

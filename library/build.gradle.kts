@@ -15,8 +15,6 @@ plugins {
     alias(libs.plugins.kover)
 }
 
-group = "org.angproj.big"
-version = "0.10.3"
 
 kotlin {
     explicitApi()
@@ -126,16 +124,18 @@ mavenPublishing {
     }
 }
 
-tasks.dokkaHtml {
-    dokkaSourceSets {
-        named("commonMain"){
-            moduleName.set(This.longName)
-            includes.from("Module.md")
-            sourceLink {
-                localDirectory.set(file("src/commonMain/kotlin"))
-                remoteUrl.set(URI(This.url + "/tree/master/library/src/commonMain/kotlin").toURL())
-                remoteLineSuffix.set("#L")
-            }
+dokka {
+    dokkaPublications.html {
+        moduleName.set(rootProject.name)
+    }
+
+    pluginsConfiguration.html {
+        footerMessage.set("Copyright (c) 2024-2026 Kristoffer Paulsson.")
+    }
+
+    dokkaSourceSets.commonMain {
+        sourceLink {
+            remoteUrl(This.url + "/tree/main/library")
         }
     }
 }
