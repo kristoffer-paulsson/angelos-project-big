@@ -1,0 +1,317 @@
+#
+# Copyright (c) 2025-2026 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+#
+# This software is available under the terms of the MIT license. Parts are licensed
+# under different terms if stated. The legal terms are attached to the LICENSE file
+# and are made available on:
+#
+#      https://opensource.org/licenses/MIT
+#
+# SPDX-License-Identifier: MIT
+#
+# Contributors:
+#      Kristoffer Paulsson - initial implementation
+#
+version: 2.1
+
+orbs:
+  coverage-reporter: codacy/coverage-reporter@14.1.0
+  coveralls: coveralls/coveralls@2.2.5
+
+executors:
+  gradle:
+    docker:
+      - image: cimg/android:2026.02-browsers
+    resource_class: medium
+  macos:
+    macos:
+      xcode: 26.3.0
+    resource_class: m4pro.medium
+  windows:
+    machine:
+      image: windows-server-2022-gui:current
+    resource_class: windows.medium
+
+commands:
+  extract_m2_version:
+    steps:
+      - run:
+          name: Extract LocalRepo name
+          command: |
+            echo "m2-v1" > /tmp/m2-cache-key.txt
+  extract_gradle_version:
+    steps:
+      - run:
+          name: Extract Gradle version
+          command: |
+            GRADLE_VERSION=$(grep -o 'gradle-[0-9.]*' gradle/wrapper/gradle-wrapper.properties | cut -d- -f2)
+            echo "$GRADLE_VERSION" > /tmp/gradle-cache-key.txt
+  extract_kotlin_version:
+    steps:
+      - run:
+          name: Extract Kotlin version
+          command: |
+            KOTLIN_VERSION=$(grep 'kotlin =' gradle/libs.versions.toml | cut -d'"' -f2)
+            echo "$KOTLIN_VERSION" > /tmp/kotlin-cache-key.txt
+  restore_gradle_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - gradle-v1-{{ checksum "/tmp/gradle-cache-key.txt" }}
+            - gradle-v1-
+  restore_konan_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - konan-v1-{{ checksum "/tmp/kotlin-cache-key.txt" }}
+            - konan-v1-
+  restore_m2_cache:
+    steps:
+      - restore_cache:
+          keys:
+            - m2-v1-{{ checksum "/tmp/m2-cache-key.txt" }}
+            - m2-v1-
+  ensure_gradle_wrapper:
+    steps:
+      - run:
+          name: Ensure Gradle Wrapper JAR
+          command: |
+            mkdir -p gradle/wrapper
+            if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+              GRADLE_VERSION=$(sed -n 's/.*gradle-\(.*\)-bin\.zip.*/\1/p' gradle/wrapper/gradle-wrapper.properties)
+              # If only major.minor (patch zero missing) → actively add .0
+              if [[ $GRADLE_VERSION =~ ^([0-9]+)\.([0-9]+)$ ]]; then
+                GRADLE_VERSION="${GRADLE_VERSION}.0"
+              fi
+              curl -L --fail --silent -o gradle/wrapper/gradle-wrapper.jar \
+                "https://raw.githubusercontent.com/gradle/gradle/v${GRADLE_VERSION}/gradle/wrapper/gradle-wrapper.jar"
+            fi
+  accept_android_licenses:
+    steps:
+      - run:
+          name: Accept Android licenses
+          command: yes | sdkmanager --licenses || true
+  configure_kotlin_native:
+    steps:
+      - run:
+          name: Configure Kotlin Native
+          command: echo "kotlin.native.ignoreDisabledTargets=true" >> gradle.properties
+  run_build:
+    steps:
+      - run:
+          name: Run build
+          command: ./gradlew build --no-daemon --stacktrace -x test
+  run_tests:
+    steps:
+      - run:
+          name: Split tests
+          command: |
+            cd library
+            # Get list of classnames of tests that should run on this node.
+            #circleci tests glob "library/src/commonTest/kotlin/**/*Test.kt" "library/src/jvmTest/kotlin/**/*Test.kt" | cut -c 1- | sed 's@/@.@g' | sed 's/.\{3\}$//' | circleci tests run --command=">classnames.txt xargs echo" --verbose --split-by=timings --timings-type=classname
+            circleci tests glob "src/commonTest/kotlin/**/*Test.kt" "src/jvmTest/kotlin/**/*Test.kt" | sed 's#^src/[a-zA-Z]*Test/kotlin/##' | cut -c 1- | sed 's@/@.@g' | sed 's/\.kt$//' | circleci tests run --command=">classnames.txt xargs echo" --verbose --split-by=timings --timings-type=classname
+            
+            
+            # If this is a re-run and it is a parallel run that does not have tests to run, halt execution of this parallel run
+            [ -s classnames.txt ] || circleci-agent step halt
+      - run:
+          name: Run split tests
+          command: |
+
+            # Format the arguments to "./gradlew jvmTest"
+            GRADLE_ARGS=$(cat library/classnames.txt | awk '{for (i=1; i<=NF; i++) print "--tests",$i}')
+            echo "Prepared arguments for Gradle: $GRADLE_ARGS"
+
+            ./gradlew :library:jvmTest $GRADLE_ARGS --no-daemon --stacktrace  # Adjust path to gradlew if needed; use :library: prefix for subproject
+
+      - store_test_results:
+          path: library/build/test-results
+  publish_to_maven_local:
+    steps:
+      - run:
+          name: Publish to Maven Local
+          command: ./gradlew publishToMavenLocal --no-daemon --stacktrace
+  publish_and_backup_maven:
+    steps:
+      - run:
+          name: Publish to custom local & backup
+          command: |
+            ./gradlew publishToMavenLocal -Dmaven.repo.local=/tmp/maven-local --no-daemon --stacktrace
+            tar -czf /tmp/maven-local.tar.gz -C /tmp maven-local
+      - store_artifacts:
+          path: /tmp/maven-local.tar.gz
+          destination: maven-local
+  collect_test_results:
+    steps:
+      - run:
+          name: Collect test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+  kover_xml_report:
+    steps:
+      - run:
+          name: Generate Kover XML report
+          command: ./gradlew koverXmlReport --no-daemon
+  kover_html_report:
+    steps:
+      - run:
+          name: Generate Kover XML report
+          command: ./gradlew koverHtmlReport --no-daemon
+  coveralls_coverage_upload:
+    steps:
+      - coveralls/upload:  # COVERALLS_REPO_TOKEN must be set in CircleCI project settings
+          coverage_file: library/build/reports/kover/report.xml
+  codacy_coverage_upload:
+    steps:
+      - coverage-reporter/send_report:  # CODACY_PROJECT_TOKEN must be set in CircleCI project settings
+          coverage-reports: library/build/reports/kover/report.xml -l Kotlin final
+          project-token: $CODACY_PROJECT_TOKEN
+  save_gradle_cache:
+    steps:
+      - save_cache:
+          key: gradle-v1-{{ checksum "/tmp/gradle-cache-key.txt" }}
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+  save_konan_cache:
+    steps:
+      - save_cache:
+          key: konan-v1-{{ checksum "/tmp/kotlin-cache-key.txt" }}
+          paths:
+            - ~/.konan
+  save_m2_cache:
+    steps:
+      - save_cache:
+          key: m2-v1-{{ checksum "/tmp/m2-cache-key.txt" }}
+          paths:
+            - ~/.m2
+  generate_docs:
+    steps:
+      - run:
+          name: Generate documentation with Dokka
+          command: ./gradlew dokkaGenerateHtml --no-daemon --stacktrace
+  store_docs:
+    steps:
+      - store_artifacts:
+          path: library/build/dokka/html
+          destination: documentation
+  prepare:
+    steps:
+      - checkout
+      - extract_gradle_version
+      - extract_kotlin_version
+      - extract_m2_version
+      - restore_gradle_cache
+      - restore_konan_cache
+      - restore_m2_cache
+      - ensure_gradle_wrapper
+      - accept_android_licenses
+      - configure_kotlin_native
+  cleanup:
+    steps:
+      - save_gradle_cache
+      - save_konan_cache
+      - save_m2_cache
+
+jobs:
+  coveralls-coverage-report:
+    executor: gradle
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx4g"
+    steps:
+      - prepare
+      - kover_xml_report
+      - coveralls_coverage_upload
+      - cleanup
+  human-coverage-report:
+    executor: gradle
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx4g"
+    steps:
+      - prepare
+      - kover_html_report
+      - cleanup
+  build-and-test:
+    executor: << pipeline.parameters.platform >>
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx4g"
+    steps:
+      - prepare
+      # - run_build
+      - run_tests
+      - cleanup
+  publish-local-artifacts:
+    executor: gradle
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx4g"
+    steps:
+      - prepare
+      - publish_and_backup_maven
+      - cleanup
+  gen-docs:
+    executor: << pipeline.parameters.platform >>
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx4g"
+    steps:
+      - prepare
+      - generate_docs
+      - store_docs
+      - cleanup
+  publish-to-repsy:
+    executor: gradle
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx4g"
+    steps:
+      - prepare
+      - run:
+          name: Publish to Repsy private Maven repository
+          command: ./gradlew publishAllPublicationsToRepsyRepository --no-daemon --stacktrace
+      - cleanup
+
+parameters:
+  action:
+    type: enum
+    enum: [test, coverage, report, docs, publish]
+    default: docs
+  platform:
+    type: enum
+    enum: [gradle, macos, windows]
+    default: gradle
+
+workflows:
+  #  version: 2
+  #  ci:
+  #    jobs:
+  #      - publish-local-artifacts
+  coverage:
+    when:
+      equal: [ coverage, << pipeline.parameters.action >> ]
+    jobs:
+      - coveralls-coverage-report
+  report:
+    when:
+      equal: [ report, << pipeline.parameters.action >> ]
+    jobs:
+      - human-coverage-report
+  test:
+    when:
+      equal: [ test, << pipeline.parameters.action >> ]
+    jobs:
+      - build-and-test
+  docs:
+    when:
+      equal: [ docs, << pipeline.parameters.action >> ]
+    jobs:
+      - gen-docs
+  build-and-publish:
+    when:
+      equal: [ publish, << pipeline.parameters.action >> ]
+    jobs:
+      - publish-to-repsy:
+          filters:
+            branches:
+              only: main
+            tags:
+              only: /v.*/
