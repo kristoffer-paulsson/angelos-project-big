@@ -20,6 +20,9 @@ package org.angproj.big
 /**
  * Compares this BigInt with another BigInt.
  *
+ * This is a special comparison that returns a [BigCompare] object instead of just an Int,
+ * allowing for more explicit and readable comparison results.
+ *
  * @param other the BigInt to compare with.
  * @return a [BigCompare] indicating whether this BigInt is less than, equal to, or greater than the specified BigInt.
  */

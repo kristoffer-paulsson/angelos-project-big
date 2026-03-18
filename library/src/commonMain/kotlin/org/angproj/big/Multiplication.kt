@@ -30,6 +30,9 @@ public operator fun BigInt.times(other: BigInt): BigInt = multiply(other)
 /**
  * Multiplies two BigInt values together.
  *
+ * This function performs full arbitrary precision multiplication.
+ * If either operand is zero, the result is zero.
+ *
  * @param value the BigInt to multiply with this BigInt.
  * @return a new BigInt that is the product of this BigInt and the specified BigInt.
  */

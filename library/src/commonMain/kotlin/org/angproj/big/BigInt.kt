@@ -83,6 +83,8 @@ public data class BigInt(
 /**
  * Converts the BigInt to an Int representation.
  *
+ * If the BigInt value is outside the range of Int, the result is truncated to fit.
+ *
  * @return An Int representing the value of the BigInt.
  */
 public fun BigInt.toInt(): Int = ExportImportBigInt.intValue(mag, sigNum)
@@ -90,18 +92,36 @@ public fun BigInt.toInt(): Int = ExportImportBigInt.intValue(mag, sigNum)
 /**
  * Converts the BigInt to a Long representation.
  *
+ * If the BigInt value is outside the range of Long, the result is truncated to fit.
+ *
  * @return A Long representing the value of the BigInt.
  */
 public fun BigInt.toLong(): Long = ExportImportBigInt.longValue(mag, sigNum)
 
+/**
+ * Returns the number of bits required to represent this BigInt (excluding the sign bit).
+ *
+ * For positive numbers, this is the position of the highest set bit plus one.
+ * For negative numbers in two's complement, this accounts for the sign representation.
+ * For zero, this returns 0.
+ */
 public val BigInt.bitLength: Int
     get() = LoadAndSaveBigInt.bitLength(mag, sigNum)
 
+/**
+ * Returns the number of bits set to 1 in the two's complement representation of this BigInt.
+ *
+ * For positive numbers, this counts the 1-bits in the binary representation.
+ * For negative numbers, this counts the 1-bits in the two's complement representation.
+ */
 public val BigInt.bitCount: Int
     get() = LoadAndSaveBigInt.bitCount(mag, sigNum)
 
 /**
  * Converts the BigInt to a ByteArray representation.
+ *
+ * The byte array is in two's complement big-endian format. For positive numbers,
+ * this is simply the big-endian binary representation.
  *
  * @return A ByteArray representing the value of the BigInt.
  */
@@ -117,8 +137,11 @@ public fun BigInt.getByteSize(): Int = bitLength / 8 + 1
 /**
  * Creates a BigInt from a ByteArray.
  *
+ * The byte array is interpreted as a signed big-endian integer in two's complement format.
+ *
  * @param value The ByteArray to convert to BigInt.
  * @return A BigInt representing the given ByteArray.
+ * @throws BigMathException if the byte array is empty.
  */
 public fun bigIntOf(value: ByteArray): BigInt = LoadAndSaveBigInt.internalOf(value)
 
@@ -133,7 +156,10 @@ public fun bigIntOf(value: Long): BigInt = ExportImportBigInt.valueOf(value)
 /**
  * Creates a BigInt from a ByteArray, treating the bytes as an unsigned value.
  *
- * @param value The ByteArray to convert to BigInt.
- * @return A BigInt representing the given ByteArray.
+ * The byte array is interpreted as an unsigned big-endian integer.
+ *
+ * @param value The ByteArray to convert to BigInt (interpreted as unsigned).
+ * @return A BigInt representing the given unsigned ByteArray.
+ * @throws BigMathException if the byte array is empty.
  */
 public fun unsignedBigIntOf(value: ByteArray): BigInt = Unsigned.internalOf(value)

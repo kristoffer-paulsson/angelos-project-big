@@ -21,6 +21,18 @@ import org.angproj.sec.util.ensure
 public fun IntArray.valueOf(): BigInt = ExportImportBigInt.valueOf(this)
 
 
+/**
+ * Internal utility object for converting between BigInt and its internal integer array representation.
+ *
+ * This object provides methods to:
+ * - Convert between BigInt and signed/unsigned integer arrays
+ * - Handle leading zero stripping and two's complement conversion
+ * - Export BigInt values to primitive types (Int, Long)
+ * - Manage signage for positive, negative, and zero values
+ *
+ * These operations are internal implementation details and should not be used directly
+ * outside of the BigInt implementation.
+ */
 public object ExportImportBigInt {
 
     private inline fun <reified R : Any> stripKeep(data: IntArray): Int {

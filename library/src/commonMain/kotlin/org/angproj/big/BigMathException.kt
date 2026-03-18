@@ -14,4 +14,9 @@
  */
 package org.angproj.big
 
+/**
+ * Exception thrown when an invalid mathematical operation is attempted on a BigInt.
+ *
+ * @param message The error message describing the mathematical error.
+ */
 public class BigMathException(message: String = "") : RuntimeException(message)

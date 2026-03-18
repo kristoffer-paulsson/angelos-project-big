@@ -17,12 +17,18 @@ package org.angproj.big
 /**
  * Returns the bitwise negation of this BigInt.
  *
+ * This is equivalent to flipping all bits. For two's complement representation,
+ * this is equivalent to computing -x - 1 (one's complement).
+ *
  * @return a new BigInt representing the bitwise negation of this BigInt.
  */
 public fun BigInt.inv(): BigInt = not()
 
 /**
  * Returns the bitwise negation of this BigInt.
+ *
+ * This is equivalent to flipping all bits. For two's complement representation,
+ * this is equivalent to computing -x - 1 (one's complement).
  *
  * @return a new BigInt representing the bitwise negation of this BigInt.
  */

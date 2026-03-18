@@ -45,6 +45,19 @@ public fun IntArray.intGetCompUnrev(
 public fun IntArray.rev(index: Int): Int = this.lastIndex - index
 
 
+/**
+ * Internal utility object for loading and saving BigInt data.
+ *
+ * This object provides methods to:
+ * - Convert BigInt magnitude arrays to/from ByteArray representations
+ * - Calculate bit length and bit count for BigInt values
+ * - Access and manipulate individual integers in a BigInt's magnitude array
+ * - Handle signed/unsigned integer conversions
+ * - Compute bit positions and lengths
+ *
+ * These operations are internal implementation details and should not be used directly
+ * outside of the BigInt implementation.
+ */
 public object LoadAndSaveBigInt {
 
     public fun bitLengthForInt(n: Int): Int = TypeSize.intBits - n.countLeadingZeroBits()

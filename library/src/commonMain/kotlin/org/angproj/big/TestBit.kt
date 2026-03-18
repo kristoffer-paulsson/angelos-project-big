@@ -20,6 +20,10 @@ import org.angproj.sec.util.ensure
 /**
  * Tests whether the bit at the specified position is set.
  *
+ * In two's complement representation, bit 0 is the least significant bit.
+ * For positive numbers, returns whether the bit is 1.
+ * For negative numbers, returns the bit value in the two's complement representation.
+ *
  * @param pos the position of the bit to test, where 0 is the least significant bit.
  * @return `true` if the bit at the specified position is set, `false` otherwise.
  * @throws BigMathException if `pos` is negative.

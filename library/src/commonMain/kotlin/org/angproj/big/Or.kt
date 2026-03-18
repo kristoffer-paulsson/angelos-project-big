@@ -25,6 +25,9 @@ import kotlin.math.max
 /**
  * Performs a bitwise OR operation on this [BigInt] and the [value] [BigInt].
  *
+ * The result has a bit set to 1 if that bit is set to 1 in either operand.
+ * For negative numbers, this operates on the two's complement representation.
+ *
  * @param value The [BigInt] to OR with.
  * @return A new [BigInt] representing the result of the OR operation.
  */

@@ -23,6 +23,20 @@ import org.angproj.sec.util.ensure
  * */
 public object Unsigned {
 
+    /**
+     * Strips leading zero bytes from the data and constructs an IntArray with the remaining bytes.
+     *
+     * This is a helper function that processes unsigned byte data and converts it to the internal
+     * integer array representation used by BigInt, removing any unnecessary leading zeros.
+     *
+     * @param firstOctet The first octet to start processing from
+     * @param data The data source from which to read octets
+     * @param size The total size of the data
+     * @param readOctet A lambda function that reads a single octet at the given index
+     * @return An IntArray representing the significant bytes, or an empty IntArray if the result is zero
+     *
+     * @see internalOf
+     */
     private fun <E> stripLeadingZeroBytes(
         firstOctet: Int, data: E, size: Int, readOctet: E.(i: Int) -> Byte
     ): IntArray {
@@ -62,6 +76,9 @@ public object Unsigned {
      * */
     public fun internalOf(bytes: ByteArray): BigInt = internalOf(bytes, bytes.size) { this[it] }
 
+    /**
+     *
+     */
     public fun <E> internalOf(data: E, size: Int, readOctet: E.(i: Int) -> Byte): BigInt {
         ensure(size > 0) { BigMathException("Zero length magnitude") }
 

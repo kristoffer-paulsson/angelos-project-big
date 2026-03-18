@@ -18,11 +18,19 @@ import org.angproj.sec.util.ceilDiv
 
 
 /**
- * Converts a hexadecimal string (with possible uppercase or lowercase letters) to a [ByteArray].
+ * Converts a hexadecimal string to a [ByteArray].
  *
+ * This function accepts hexadecimal strings with either uppercase or lowercase letters (0-9, A-F, a-f).
  * If the string has an odd length, it is treated as if a leading '0' were prepended to make the length even.
  *
+ * For example:
+ * - "FF" -> [0xFF]
+ * - "F" -> [0x0F]
+ * - "ABCD" -> [0xAB, 0xCD]
+ * - "" -> []
+ *
  * @return A [ByteArray] containing the decoded bytes.
+ * @throws IllegalArgumentException if an invalid hexadecimal character is found.
  */
 public fun String.fromHexSymbols(): ByteArray {
     if (isEmpty()) return byteArrayOf()
@@ -43,6 +51,13 @@ public fun String.fromHexSymbols(): ByteArray {
     return bytes
 }
 
+/**
+ * Converts a single hexadecimal character to its integer value.
+ *
+ * @param c The character code (from [Char.code]) of a hexadecimal digit.
+ * @return The integer value (0-15) of the hexadecimal digit.
+ * @throws IllegalArgumentException if the character is not a valid hexadecimal digit (0-9, A-F, a-f).
+ */
 private inline fun <reified E : Any> fromHexChar(c: Int): Int = when (c) {
     in 0x30..0x39 -> c - 0x30 // 0-9
     in 0x61..0x66 -> 10 + c - 0x61 // a-f

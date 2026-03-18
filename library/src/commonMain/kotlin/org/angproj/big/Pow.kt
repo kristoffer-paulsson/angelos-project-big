@@ -20,9 +20,16 @@ import org.angproj.sec.util.ensure
 /**
  * Raises this [BigInt] to the power of the given [exponent].
  *
- * @param exponent The exponent to raise this [BigInt] to.
- * @return A new [BigInt] representing the result of the exponentiation.
- * @throws BigMathException if the exponent is negative or if the exponent is too large for memory.
+ * This function uses exponentiation by squaring for efficient computation.
+ * Special cases:
+ * - Any number to the power of 0 equals 1 (except BigInt.zero^0 returns 0)
+ * - Any number to the power of 1 equals itself
+ * - 0 raised to any power equals 0
+ *
+ * @param exponent The non-negative exponent to raise this [BigInt] to.
+ * @return A new [BigInt] representing the result of this [BigInt] raised to [exponent].
+ * @throws BigMathException if the exponent is negative.
+ * @throws BigMathException if the exponent is so large that the result would exceed available memory.
  */
 public fun BigInt.pow(exponent: Int): BigInt = when {
     exponent < 0 -> ensure { BigMathException("Exponent can not be negative") }

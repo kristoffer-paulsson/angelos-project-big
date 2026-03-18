@@ -15,10 +15,13 @@
 package org.angproj.big
 
 /**
- * Finds the greatest common divisor between [BigInt] and [b].
+ * Finds the greatest common divisor between this [BigInt] and [b].
  *
- * @param b The second number to compute [BigInt] against.
- * @return A new [BigInt] representing the GCD.
+ * This function uses Euclidean algorithm for efficient computation.
+ * The result is always non-negative. The GCD of 0 and any number is that number.
+ *
+ * @param b The second number to compute the GCD against.
+ * @return A new [BigInt] representing the greatest common divisor of this value and [b].
  */
 public fun BigInt.gcd(b: BigInt): BigInt = BigInt.innerGcd(this.abs(), b.abs())
 

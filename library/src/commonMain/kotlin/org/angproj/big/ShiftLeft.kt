@@ -25,6 +25,9 @@ import org.angproj.sec.util.TypeSize
 /**
  * Shift this BigInt left by the specified number of bits.
  *
+ * A left shift by n bits is equivalent to multiplying by 2^n.
+ * If n is negative, performs a right shift by -n bits.
+ *
  * @param n the number of bits to shift left.
  * @return a new BigInt representing the result of the shift operation.
  */
@@ -32,6 +35,9 @@ public infix fun BigInt.shl(n: Int): BigInt = shiftLeft(n)
 
 /**
  * Shift this BigInt left by the specified number of bits.
+ *
+ * A left shift by n bits is equivalent to multiplying by 2^n.
+ * If n is negative, performs a right shift by -n bits.
  *
  * @param n the number of bits to shift left.
  * @return a new BigInt representing the result of the shift operation.

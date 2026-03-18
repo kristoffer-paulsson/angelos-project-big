@@ -24,6 +24,8 @@ import org.angproj.sec.util.ensure
 /**
  * Returns the quotient when this [BigInt] is divided by the [other] [BigInt].
  *
+ * The quotient is rounded towards zero (truncated).
+ *
  * @param other The divisor [BigInt].
  * @return A new [BigInt] representing the quotient.
  * @throws BigMathException if the divisor is zero.
@@ -33,6 +35,8 @@ public operator fun BigInt.div(other: BigInt): BigInt = divide(other)
 /**
  * Returns the remainder when this [BigInt] is divided by the [other] [BigInt].
  *
+ * The sign of the remainder follows the sign of the dividend (this value).
+ *
  * @param other The divisor [BigInt].
  * @return A new [BigInt] representing the remainder.
  * @throws BigMathException if the divisor is zero.
@@ -41,6 +45,8 @@ public operator fun BigInt.rem(other: BigInt): BigInt = remainder(other)
 
 /**
  * Returns the quotient when this [BigInt] is divided by the [value] [BigInt].
+ *
+ * The quotient is rounded towards zero (truncated).
  *
  * @param value The divisor [BigInt].
  * @return A new [BigInt] representing the quotient.

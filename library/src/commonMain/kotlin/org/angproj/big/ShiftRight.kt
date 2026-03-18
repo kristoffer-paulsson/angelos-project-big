@@ -26,6 +26,10 @@ import org.angproj.sec.util.TypeSize
 /**
  * Shift this BigInt right by the specified number of bits.
  *
+ * A right shift by n bits is equivalent to dividing by 2^n (with truncation towards zero).
+ * This is an arithmetic right shift, preserving the sign.
+ * If n is negative, performs a left shift by -n bits.
+ *
  * @param n the number of bits to shift right.
  * @return a new BigInt representing the result of the shift operation.
  */
@@ -33,6 +37,10 @@ public infix fun BigInt.shr(n: Int): BigInt = shiftRight(n)
 
 /**
  * Shift this BigInt right by the specified number of bits.
+ *
+ * A right shift by n bits is equivalent to dividing by 2^n (with truncation towards zero).
+ * This is an arithmetic right shift, preserving the sign.
+ * If n is negative, performs a left shift by -n bits.
  *
  * @param n the number of bits to shift right.
  * @return a new BigInt representing the result of the shift operation.

@@ -23,6 +23,8 @@ import kotlin.math.max
 /**
  * Decrements this BigInt by one.
  *
+ * Equivalent to `this - BigInt.one`.
+ *
  * @return a new BigInt that is one less than this BigInt.
  */
 public operator fun BigInt.dec(): BigInt = subtract(BigInt.one)
@@ -37,6 +39,8 @@ public operator fun BigInt.minus(other: BigInt): BigInt = this.subtract(other)
 
 /**
  * Subtracts the specified BigInt from this BigInt.
+ *
+ * This function performs full arbitrary precision subtraction.
  *
  * @param value the BigInt to subtract from this BigInt.
  * @return a new BigInt that is the result of subtracting the specified BigInt from this BigInt.

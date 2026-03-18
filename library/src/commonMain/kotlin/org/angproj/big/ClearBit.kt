@@ -27,8 +27,13 @@ import kotlin.math.max
 /**
  * Clears the bit at the specified [pos] in this [BigInt].
  *
- * @param pos The position of the bit to clear.
- * @return A new [BigInt] with the specified bit cleared.
+ * This operation sets the bit at the specified position to 0.
+ * This operation does not modify this BigInt, but returns a new BigInt with the bit cleared.
+ * The position 0 refers to the least significant bit.
+ *
+ * @param pos The position of the bit to clear (0-indexed, where 0 is the least significant bit).
+ * @return A new [BigInt] with the specified bit cleared to 0.
+ * @throws BigMathException if pos is negative.
  */
 public fun BigInt.clearBit(pos: Int): BigInt = BigInt.innerClearBit(this.mag, this.sigNum, pos).valueOf()
 
