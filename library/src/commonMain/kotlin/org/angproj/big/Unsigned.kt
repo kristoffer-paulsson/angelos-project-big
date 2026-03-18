@@ -68,16 +68,28 @@ public object Unsigned {
     }
 
     /**
-     * Creates a `BigInt` instance from an unsigned byte array.
+     * Creates a `[BigInt]` instance from an unsigned byte array.
+     *
+     * Interprets the byte array as an unsigned big-endian integer. The result is always
+     * non-negative, and any leading zero bytes are stripped.
      *
      * @param bytes the byte array representing the magnitude of the `BigInt`.
-     * @return a `BigInt` instance with the specified magnitude and positive sign.
+     * @return a `BigInt` instance with the specified magnitude and positive sign, or zero sign if all bytes are zero.
      * @throws BigMathException if the byte array is empty or has zero length.
-     * */
+     */
     public fun internalOf(bytes: ByteArray): BigInt = internalOf(bytes, bytes.size) { this[it] }
 
     /**
+     * Creates a `[BigInt]` from an unsigned byte-like data source.
      *
+     * Generic function that interprets bytes as an unsigned big-endian integer.
+     * The result is always non-negative. Leading zero bytes are stripped before creating the BigInt.
+     *
+     * @param data the data source (ByteArray, List, etc.).
+     * @param size the number of bytes to read.
+     * @param readOctet lambda to read a byte at the specified index.
+     * @return a `BigInt` instance with [BigSigned.POSITIVE] or [BigSigned.ZERO] sign.
+     * @throws BigMathException if size is zero.
      */
     public fun <E> internalOf(data: E, size: Int, readOctet: E.(i: Int) -> Byte): BigInt {
         ensure(size > 0) { BigMathException("Zero length magnitude") }
