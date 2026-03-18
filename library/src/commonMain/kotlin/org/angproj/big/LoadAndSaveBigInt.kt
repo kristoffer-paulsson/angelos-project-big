@@ -25,7 +25,7 @@ import org.angproj.sec.util.ensure
  *
  * @return the unsigned [Long] representation of this Int.
  */
-public fun Int.longMask(): Long = this.toLong() and 0xFFFFFFFFL
+internal fun Int.longMask(): Long = this.toLong() and 0xFFFFFFFFL
 
 /**
  * Sets a [Long] value in this [IntArray] at the specified index using big-endian ordering.
@@ -36,7 +36,7 @@ public fun Int.longMask(): Long = this.toLong() and 0xFFFFFFFFL
  * @param index the reverse index to set (0-based from the right).
  * @param value the [Long] value to store.
  */
-public fun IntArray.longSet(index: Int, value: Long) {
+internal fun IntArray.longSet(index: Int, value: Long) {
     this[lastIndex - index] = value.toInt()
 }
 
@@ -49,7 +49,7 @@ public fun IntArray.longSet(index: Int, value: Long) {
  * @param index the reverse index to set (0-based from the right).
  * @param value the [Int] value to store.
  */
-public fun IntArray.intSet(index: Int, value: Int) {
+internal fun IntArray.intSet(index: Int, value: Int) {
     this[lastIndex - index] = value
 }
 
@@ -62,7 +62,7 @@ public fun IntArray.intSet(index: Int, value: Int) {
  * @param index the reverse index to get (0-based from the right).
  * @return the [Int] value at the specified position.
  */
-public fun IntArray.intGet(index: Int): Int = this[lastIndex - index]
+internal fun IntArray.intGet(index: Int): Int = this[lastIndex - index]
 
 /**
  * Finds the position of the first non-zero [Int] element from the right.
@@ -72,7 +72,7 @@ public fun IntArray.intGet(index: Int): Int = this[lastIndex - index]
  *
  * @return the index of the first non-zero element from the right.
  */
-public fun IntArray.firstNonzero(): Int = LoadAndSaveBigInt.firstNonZeroIntNum(this)
+internal fun IntArray.firstNonzero(): Int = LoadAndSaveBigInt.firstNonZeroIntNum(this)
 
 /**
  * Calculates the number of [Int] units needed to represent a [BigInt] with the given sign.
@@ -82,7 +82,7 @@ public fun IntArray.firstNonzero(): Int = LoadAndSaveBigInt.firstNonZeroIntNum(t
  * @param sigNum the sign of the [BigInt].
  * @return the number of Int units needed.
  */
-public fun IntArray.intLength(sigNum: BigSigned): Int = LoadAndSaveBigInt.intLength(this, sigNum)
+internal fun IntArray.intLength(sigNum: BigSigned): Int = LoadAndSaveBigInt.intLength(this, sigNum)
 
 /**
  * Gets an [Int] value at the specified position with sign extension for two's complement.
@@ -95,7 +95,7 @@ public fun IntArray.intLength(sigNum: BigSigned): Int = LoadAndSaveBigInt.intLen
  * @param firstNonZero the cached position of first non-zero element.
  * @return the value with sign extension applied.
  */
-public fun IntArray.intGetComp(
+internal fun IntArray.intGetComp(
     index: Int, sigNum: BigSigned, firstNonZero: Int
 ): Int = LoadAndSaveBigInt.getInt(index, this, sigNum, firstNonZero)
 
@@ -110,7 +110,7 @@ public fun IntArray.intGetComp(
  * @param firstNonZero the cached position of first non-zero element.
  * @return the value with sign extension applied.
  */
-public fun IntArray.intGetCompUnrev(
+internal fun IntArray.intGetCompUnrev(
     index: Int, sigNum: BigSigned, firstNonZero: Int
 ): Int = LoadAndSaveBigInt.getIntUnrev(index, this, sigNum, firstNonZero)
 
@@ -122,7 +122,7 @@ public fun IntArray.intGetCompUnrev(
  * @param index the reverse index (0 = rightmost element).
  * @return the forward index in the array.
  */
-public fun IntArray.rev(index: Int): Int = this.lastIndex - index
+internal fun IntArray.rev(index: Int): Int = this.lastIndex - index
 
 
 /**

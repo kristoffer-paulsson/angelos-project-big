@@ -23,7 +23,7 @@ import org.angproj.sec.util.ensure
  *
  * @return a [BigInt] instance created from the integer array.
  */
-public fun IntArray.valueOf(): BigInt = ExportImportBigInt.valueOf(this)
+internal fun IntArray.valueOf(): BigInt = ExportImportBigInt.valueOf(this)
 
 
 /**

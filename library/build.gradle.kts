@@ -1,5 +1,4 @@
 import com.vanniktech.maven.publish.SonatypeHost
-import java.net.URI
 
 object This {
     const val longName = "Big Integer implementation - Angelos Project™"
@@ -130,12 +129,12 @@ dokka {
     }
 
     pluginsConfiguration.html {
-        footerMessage.set("Copyright (c) 2024-2026 Kristoffer Paulsson.")
+        footerMessage.set("Copyright (c) 2023-2026 Kristoffer Paulsson.")
     }
 
     dokkaSourceSets.commonMain {
         sourceLink {
-            remoteUrl(This.url + "/tree/main/library")
+            remoteUrl(This.url + "/tree/master/library")
         }
     }
 }

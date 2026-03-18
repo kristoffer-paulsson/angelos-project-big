@@ -48,6 +48,7 @@ internal fun BigInt.Companion.innerCreateInRange(min: BigInt, max: BigInt, rando
  * @param bitLength The desired bit length of the random BigInt.
  * @return A random BigInt with the specified bit length.
  * @throws BigMathException If the random generation fails.
+ * @throws SecureRandomException If the runtime random generator is broken for secure random or if jitter entropy has a broken clock.
  */
 public fun BigInt.Companion.createEntropyBigInt(bitLength: Int): BigInt {
     return innerCreateBigint(bitLength) {
@@ -62,6 +63,7 @@ public fun BigInt.Companion.createEntropyBigInt(bitLength: Int): BigInt {
  * @param max The maximum value (exclusive).
  * @return A random BigInt in the range [min, max).
  * @throws BigMathException If min is greater than or equal to max.
+ * @throws SecureRandomException If the runtime random generator is broken for secure random or if jitter entropy has a broken clock.
  */
 public fun BigInt.Companion.createEntropyInRange(min: BigInt, max: BigInt): BigInt {
     return innerCreateInRange(min, max) {
@@ -75,6 +77,7 @@ public fun BigInt.Companion.createEntropyInRange(min: BigInt, max: BigInt): BigI
  * @param bitLength The desired bit length of the random BigInt.
  * @return A random BigInt with the specified bit length.
  * @throws BigMathException If the random generation fails.
+ * @throws SecureRandomException If the runtime random generator is broken for secure random or if jitter entropy has a broken clock.
  */
 public fun BigInt.Companion.createRandomBigInt(bitLength: Int): BigInt {
     return innerCreateBigint(bitLength) {
@@ -89,6 +92,7 @@ public fun BigInt.Companion.createRandomBigInt(bitLength: Int): BigInt {
  * @param max The maximum value (exclusive).
  * @return A random BigInt in the range [min, max).
  * @throws BigMathException If min is greater than or equal to max.
+ * @throws SecureRandomException If the runtime random generator is broken for secure random or if jitter entropy has a broken clock.
  */
 public fun BigInt.Companion.createRandomInRange(min: BigInt, max: BigInt): BigInt {
     return innerCreateInRange(min, max) {
