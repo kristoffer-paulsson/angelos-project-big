@@ -1,5 +1,6 @@
 # BigInt - Angelos Project™
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/476df052444b4679876a6d6ff3e9a81d)](https://app.codacy.com/gh/angelos-project/angelos-project-big/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Coverage Status](https://coveralls.io/repos/github/angelos-project/angelos-project-big/badge.svg?branch=master)](https://coveralls.io/github/angelos-project/angelos-project-big?branch=master)
 
 A high-quality arbitrary-precision big integer library implemented in pure Kotlin/Common for effective multiplatform support.
 
