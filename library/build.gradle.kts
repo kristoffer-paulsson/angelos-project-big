@@ -1,3 +1,5 @@
+import java.util.Properties
+
 import com.vanniktech.maven.publish.SonatypeHost
 
 object This {
@@ -13,7 +15,6 @@ plugins {
     alias(libs.plugins.dokka)
     alias(libs.plugins.kover)
 }
-
 
 kotlin {
     explicitApi()
@@ -62,7 +63,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation("org.angproj.sec:angelos-project-secrand:0.12.6")
+            implementation("org.angproj.sec:angelos-project-secrand:0.13.0-alpha.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -85,15 +86,30 @@ android {
 }
 
 mavenPublishing {
-    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-
+    //publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     //signAllPublications()
 
-    /**
-     * The temporary artifact setup, final is coming later at some point.
-     * DO NOT USE FOR SONATYPE NEXUS
-     * */
     coordinates(group.toString(), rootProject.name, version.toString())
+
+    publishing {
+        repositories {
+            maven {
+                name = "Repsy"
+                val localProps = Properties()
+                val localPropsFile = file("${rootProject.projectDir.path}/local.properties")
+                if (localPropsFile.exists()) {
+                    localProps.load(localPropsFile.inputStream())
+                }
+                val repsyUsername = localProps.getProperty("repsy.username") ?: System.getenv("REPSY_USERNAME") ?: ""
+                val repsyPassword = localProps.getProperty("repsy.password") ?: System.getenv("REPSY_PASSWORD") ?: ""
+                credentials {
+                    username = repsyUsername
+                    password = repsyPassword
+                }
+                url = uri("https://repo.repsy.io/$repsyUsername/angelos-project")
+            }
+        }
+    }
 
     pom {
         name.set(This.longName)
