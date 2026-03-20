@@ -274,7 +274,7 @@ parameters:
   action:
     type: enum
     enum: [test, coverage, report, docs, publish]
-    default: docs
+    default: test
   platform:
     type: enum
     enum: [gradle, macos, windows]
