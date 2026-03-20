@@ -6,12 +6,14 @@ mockito = "5.4.0"
 jazzer = "0.24.0"
 android-minSdk = "34"
 android-compileSdk = "36"
+secrand = "0.13.0-alpha.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-mockito = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 kotlin-jazzer = { module = "com.code-intelligence:jazzer", version.ref = "jazzer" }
 kotlin-jazzer-api = { module = "com.code-intelligence:jazzer-api", version.ref = "jazzer" }
+angproj-secrand = {module = "org.anproj.sec:angelos-project-secrand", version.ref = "secrand"}
 
 [plugins]
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
