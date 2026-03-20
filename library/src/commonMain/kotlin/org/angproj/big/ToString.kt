@@ -25,10 +25,8 @@ package org.angproj.big
  * @return the string in the specified base (lowercase letters for a–f)
  * @throws IllegalArgumentException if the radix is outside 2..16
  */
-public fun BigInt.toString(radix: Int = 10): String {
-    if (radix !in 2..16) {
-        throw IllegalArgumentException("Radix must be between 2 and 16")
-    }
+public fun BigInt.toString(radix: Int): String {
+    require(radix in 2..16) { "Radix must be between 2 and 16" }
 
     if (sigNum.isZero()) {
         return "0"

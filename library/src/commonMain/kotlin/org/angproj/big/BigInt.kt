@@ -83,6 +83,8 @@ public data class BigInt(
         return hash * sigNum.state
     }
 
+    override fun toString(): String = toString(10)
+
     /**
      * Checks if this BigInt is the null object representation.
      *
