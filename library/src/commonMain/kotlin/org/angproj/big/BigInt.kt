@@ -33,11 +33,24 @@ public data class BigInt(
     public val sigNum: BigSigned
 ) : Comparable<BigInt> {
 
+    /**
+     * Indicates whether some other object is "equal to" this BigInt.
+     *
+     * @param other the reference object with which to compare.
+     * @return `true` if this object is the same as the `other` argument; `false` otherwise.
+     */
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
         return equalsCompare(other)
     }
 
+    /**
+     * Internal equality comparison helper.
+     *
+     * @param x the object to compare with.
+     * @return `true` if `x` represents exactly the same numeric value (sign + magnitude),
+     *         `false` otherwise.
+     */
     public fun equalsCompare(x: Any): Boolean {
         if (x === this) return true
         if (x !is BigInt) return false
@@ -54,6 +67,13 @@ public data class BigInt(
      */
     override fun compareTo(other: BigInt): Int = compareSpecial(other).state
 
+    /**
+     * Returns a hash code value for this BigInt.
+     *
+     * Note: Different corporate implementations of arbitrary-precision integers may use
+     * different hashing algorithms; this one follows the common pattern used by Java's
+     * `BigInteger`.
+     */
     override fun hashCode(): Int {
         // Truth is, different corporate implementations may have different hash algos.
         var hash = 0
@@ -71,11 +91,41 @@ public data class BigInt(
     public fun isNull(): Boolean = nullObject === this
 
     public companion object {
+        /**
+         * The constant zero value of type `BigInt`.
+         *
+         * This instance is lazily initialized on first access and is guaranteed to be
+         * the unique canonical representation of the number 0.
+         */
         public val zero: BigInt by lazy { bigIntOf(byteArrayOf(0)) }
+
+        /**
+         * The constant minus-one value of type `BigInt`.
+         *
+         * This instance is lazily initialized on first access and is guaranteed to be
+         * the unique canonical representation of the number -1.
+         */
         public val minusOne: BigInt by lazy { bigIntOf(byteArrayOf(-1)) }
+
+        /**
+         * The constant one value of type `BigInt`.
+         *
+         * This instance is lazily initialized on first access and is guaranteed to be
+         * the unique canonical representation of the number 1.
+         */
         public val one: BigInt by lazy { bigIntOf(byteArrayOf(1)) }
+
+        /**
+         * The constant two value of type `BigInt`.
+         *
+         * This instance is lazily initialized on first access and is guaranteed to be
+         * the unique canonical representation of the number 2.
+         */
         public val two: BigInt by lazy { bigIntOf(byteArrayOf(2)) }
 
+        /**
+         * Sentinel object representing a null `BigInt`.
+         */
         public val nullObject: BigInt by lazy { BigInt(intArrayOf(), BigSigned.ZERO) }
     }
 }
