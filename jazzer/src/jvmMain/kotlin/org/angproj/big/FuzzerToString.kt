@@ -3,40 +3,36 @@ package org.angproj.big
 import com.code_intelligence.jazzer.Jazzer
 import com.code_intelligence.jazzer.api.FuzzedDataProvider
 import java.math.BigInteger
-import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 
-public object FuzzerDivisionKt : FuzzPrefs() {
+public object FuzzerToStringKt : FuzzPrefs() {
     @JvmStatic
     public fun fuzzerTestOneInput(data: FuzzedDataProvider) {
-        val f1 = data.consumeBytes(16)
-        val f2 = data.consumeBytes(16)
+        val f1 = data.consumeBytes(64)
+        val f2 = data.consumeByte(2, 16).toInt()
 
         var e1 = false
         var e2 = false
 
         val r1 = try {
-            bigIntOf(f1).divideAndRemainder(bigIntOf(f2)).let {
-                Pair(it.first.toByteArray(), it.second.toByteArray()) }
+            bigIntOf(f1).toString(f2)
         } catch (_: BigMathException) {
             e1 = true
-            Pair(byteArrayOf(), byteArrayOf())
+            byteArrayOf().toString()
         }
-
         val r2 = try {
-            BigInteger(f1).divideAndRemainder(BigInteger(f2)).let {
-                Pair(it[0].toByteArray(), it[1].toByteArray()) }
+            BigInteger(f1).toString(f2)
         } catch (_: NumberFormatException) {
             e2 = true
-            Pair(byteArrayOf(), byteArrayOf())
+            byteArrayOf().toString()
         } catch (_: ArithmeticException) {
             e2 = true
-            Pair(byteArrayOf(), byteArrayOf())
+            byteArrayOf().toString()
         }
 
         if(!e1 && !e2) {
-            assertContentEquals(r1.first, r2.first)
-            assertContentEquals(r1.second, r2.second)
+            assertEquals(r1, r2)
         }
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2026 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -14,9 +14,12 @@
  */
 package org.angproj.big
 
-/**
- * Exception thrown when an invalid mathematical operation is attempted on a BigInt.
- *
- * @param message The error message describing the mathematical error.
- */
-public class BigMathException(message: String = "") : RuntimeException(message)
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
+
+class UnsignedTest {
+   @Test
+   fun testZeroLengthUnsigned() {
+       assertFailsWith<BigMathException> { unsignedBigIntOf(byteArrayOf())}
+   }
+}

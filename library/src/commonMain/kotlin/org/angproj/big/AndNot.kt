@@ -25,14 +25,19 @@ import kotlin.math.max
 /**
  * Performs a bitwise AND NOT operation on this [BigInt] and the [value] [BigInt].
  *
+ * The result has a bit set to 1 only if that bit is set to 1 in this BigInt
+ * and set to 0 in the [value] BigInt.
+ * For negative numbers, this operates on the two's complement representation.
+ *
  * @param value The [BigInt] to AND NOT with.
  * @return A new [BigInt] representing the result of the AND NOT operation.
  */
 public infix fun BigInt.andNot(value: BigInt): BigInt = BigInt.innerAndNot(
-    mag, sigNum, value.mag, value.sigNum).valueOf()
+    mag, sigNum, value.mag, value.sigNum
+).valueOf()
 
 
-public fun BigInt.Companion.innerAndNot(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
+internal fun BigInt.Companion.innerAndNot(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
     val xnz = x.firstNonzero()
     val ynz = y.firstNonzero()
 

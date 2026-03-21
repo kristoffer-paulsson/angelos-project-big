@@ -25,13 +25,16 @@ import kotlin.math.max
 /**
  * Performs a bitwise XOR operation on this [BigInt] and the [value] [BigInt].
  *
+ * The result has a bit set to 1 only if that bit is different in the two operands.
+ * For negative numbers, this operates on the two's complement representation.
+ *
  * @param value The [BigInt] to XOR with.
  * @return A new [BigInt] representing the result of the XOR operation.
  * */
 public infix fun BigInt.xor(value: BigInt): BigInt = BigInt.innerXor(mag, sigNum, value.mag, value.sigNum).valueOf()
 
 
-public fun BigInt.Companion.innerXor(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
+internal fun BigInt.Companion.innerXor(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
     val xnz = x.firstNonzero()
     val ynz = y.firstNonzero()
 

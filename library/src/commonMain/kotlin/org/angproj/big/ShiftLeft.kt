@@ -25,6 +25,9 @@ import org.angproj.sec.util.TypeSize
 /**
  * Shift this BigInt left by the specified number of bits.
  *
+ * A left shift by n bits is equivalent to multiplying by 2^n.
+ * If n is negative, performs a right shift by -n bits.
+ *
  * @param n the number of bits to shift left.
  * @return a new BigInt representing the result of the shift operation.
  */
@@ -32,6 +35,9 @@ public infix fun BigInt.shl(n: Int): BigInt = shiftLeft(n)
 
 /**
  * Shift this BigInt left by the specified number of bits.
+ *
+ * A left shift by n bits is equivalent to multiplying by 2^n.
+ * If n is negative, performs a right shift by -n bits.
  *
  * @param n the number of bits to shift left.
  * @return a new BigInt representing the result of the shift operation.
@@ -43,7 +49,7 @@ public fun BigInt.shiftLeft(n: Int): BigInt = when {
     else -> BigInt.innerShiftRight(-n, this)
 }
 
-public fun BigInt.Companion.innerShiftLeft(n: Int, x: BigInt): BigInt {
+internal fun BigInt.Companion.innerShiftLeft(n: Int, x: BigInt): BigInt {
     val nInts = n ushr 5
     val nBits = n and 0x1f
     val mag = x.mag
@@ -56,12 +62,12 @@ public fun BigInt.Companion.innerShiftLeft(n: Int, x: BigInt): BigInt {
     } else {
         val nBitsRev = TypeSize.intBits - nBits
         val highBits = mag[0] ushr nBitsRev
-        val extra = if(highBits != 0) 1 else 0
+        val extra = if (highBits != 0) 1 else 0
         newMag = IntArray(magLen + nInts + extra)
-        if(extra == 1) newMag[0] = highBits
+        if (extra == 1) newMag[0] = highBits
         val magLast = mag.lastIndex
         (0 until magLast).forEach {
-            newMag[it + extra] = (mag[it] shl nBits) or (mag[it+1] ushr nBitsRev)
+            newMag[it + extra] = (mag[it] shl nBits) or (mag[it + 1] ushr nBitsRev)
         }
         newMag[magLast + extra] = mag[magLast] shl nBits
     }

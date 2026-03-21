@@ -25,13 +25,16 @@ import kotlin.math.max
 /**
  * Performs a bitwise OR operation on this [BigInt] and the [value] [BigInt].
  *
+ * The result has a bit set to 1 if that bit is set to 1 in either operand.
+ * For negative numbers, this operates on the two's complement representation.
+ *
  * @param value The [BigInt] to OR with.
  * @return A new [BigInt] representing the result of the OR operation.
  */
 public infix fun BigInt.or(value: BigInt): BigInt = BigInt.innerOr(mag, sigNum, value.mag, value.sigNum).valueOf()
 
 
-public fun BigInt.Companion.innerOr(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
+internal fun BigInt.Companion.innerOr(x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned): IntArray {
     val xnz = x.firstNonzero()
     val ynz = y.firstNonzero()
 

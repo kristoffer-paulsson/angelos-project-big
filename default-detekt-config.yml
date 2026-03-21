@@ -1,0 +1,7 @@
+comments:
+  UndocumentedPublicClass:
+    excludes: ["**/commonTest/**", "**/jvmTest/**", "**/androidTest/**"]
+  UndocumentedPublicFunction:
+    excludes: ["**/commonTest/**", "**/jvmTest/**", "**/androidTest/**"]
+  UndocumentedPublicProperty:
+    excludes: ["**/commonTest/**", "**/jvmTest/**", "**/androidTest/**"]

@@ -1,86 +1,43 @@
-# BigInt
+# BigInt - Angelos Project™
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/476df052444b4679876a6d6ff3e9a81d)](https://app.codacy.com/gh/angelos-project/angelos-project-big/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Coverage Status](https://coveralls.io/repos/github/angelos-project/angelos-project-big/badge.svg?branch=master)](https://coveralls.io/github/angelos-project/angelos-project-big?branch=master)
 
 A high-quality arbitrary-precision big integer library implemented in pure Kotlin/Common for effective multiplatform support.
 
-## Features
+It covers all necessary features for descent cryptographic use such as implementing ECDSA (not included).
 
-### Core Arithmetic Operations
-- Addition, subtraction, multiplication, and division with remainder
-- Square root calculation with remainder support
-- Greatest Common Divisor (GCD) computation
-- Modular arithmetic (Mod, Pow)
-- Random number generation
+## Usage
 
-### Bit Manipulation
-- Bitwise operations (AND, OR, XOR, NOT, AND-NOT)
-- Bit shifting (left/right)
-- Individual bit operations (set, clear, flip, test)
-- Bit length and bit count calculations
+For use in a Kotlin/Multiplatform project, or compatible, publish the library to your own local maven repository.
 
-### Advanced Features
-- Multi-platform support through Kotlin Multiplatform
-- Efficient big-endian integer array representation
-- Comprehensive fuzzing test suite for operation validation
-- Serialization/deserialization support
-- Unsigned operations handling
-- Exception handling through BigMathException
+1. Run `./gradlew publishToMavenLocal`
+2. Add the dependency `org.angproj.big:angelos-project-big:X.Y.Z`
+3. Replace `X.Y.X` with version number in `library/build.gradle.kts`
 
-### Performance Optimizations
-- Specialized magnitude handling
-- Efficient carry propagation in arithmetic operations
-- Optimized division algorithm
-- Smart memory management
+## Tests
 
-## Getting Started
+Run `./gradlew clean build allTests` for unit tests.
 
-### Gradle Setup
-```kotlin
-dependencies {
-    implementation("org.angproj.big:angelos-project-big:0.10.2")
-}
-```
+Fuzzing covers all math operations and is designed to run for up to 2 minutes without crashing in compatibility mode 
+against Java BigInteger. The fuzzer generates random inputs and validating the results against expected outcome, the 
+same Java, thereby fully compatible. To run the fuzzer use IntelliJ IDEA and click the green arrow fron withing the
+Fuzzer*.kt files found in the `:jazzer` module.
 
-### Basic Usage
-```kotlin
-import org.angproj.big.*
+## Getting help
 
-// Create BigInt instances
-val a = bigIntOf(123456789)
-val b = bigIntOf(987654321)
+If you have questions, concerns, bug reports, etc, please file an issue in this repository.
 
-// Perform operations
-val sum = a + b
-val product = a * b
-val quotient = a / b
-val remainder = a % b
+## Getting involved
 
-// Bit operations
-val shifted = a shl 1
-val andResult = a and b
-```
+If you want to contribute to the project, please read the projects:
 
-## Quality Assurance
+* [Mission statement](https://github.com/angelos-project/.github/blob/master/profile/README.md)
+* [Contributor License Agreement (CLA)](https://github.com/angelos-project/.github/blob/master/misc/ADMISSION.md)
+* [Code of conduct](https://github.com/angelos-project/.github/blob/master/docs/CODE_OF_CONDUCT.md)
+* [Contributing guidelines](https://github.com/angelos-project/.github/blob/master/docs/CONTRIBUTING.md)
 
-### Fuzzing Coverage
-The library includes extensive fuzzing tests for core operations:
-- Arithmetic operations (addition, multiplication, division)
-- Bit manipulations (shifts, AND, OR, XOR)
-- Conversion operations (to/from Long)
-- Special operations (abs, max, pow)
-
-### Testing
-- Comprehensive unit test suite
-- Property-based testing
-- Java BigInteger compatibility tests
-- Cross-platform validation
-
-## Performance Comparison
-- Optimized for cryptographic operations
-- Comparable performance to Java BigInteger for standard operations
-- Enhanced performance for specific use cases through specialized algorithms
-
-## Contributing
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests.
+We welcome contributions of all kinds, including bug fixes, new features, and documentation improvements. please fork the repository and submit a pull request with your updates.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

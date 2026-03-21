@@ -20,13 +20,17 @@ import org.angproj.sec.util.ensure
 /**
  * Tests whether the bit at the specified position is set.
  *
+ * In two's complement representation, bit 0 is the least significant bit.
+ * For positive numbers, returns whether the bit is 1.
+ * For negative numbers, returns the bit value in the two's complement representation.
+ *
  * @param pos the position of the bit to test, where 0 is the least significant bit.
  * @return `true` if the bit at the specified position is set, `false` otherwise.
  * @throws BigMathException if `pos` is negative.
  * */
 public fun BigInt.testBit(pos: Int): Boolean = BigInt.innerTestBit(this.mag, this.sigNum, pos)
 
-public fun BigInt.Companion.innerTestBit(x: IntArray, xSig: BigSigned, pos: Int): Boolean {
+internal fun BigInt.Companion.innerTestBit(x: IntArray, xSig: BigSigned, pos: Int): Boolean {
     ensure(pos >= 0) { BigMathException("Can not flip an imaginary bit at a negative position.") }
 
     val xnz = x.firstNonzero()

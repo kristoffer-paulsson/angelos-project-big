@@ -14,9 +14,9 @@
  */
 package org.angproj.big
 
-import org.angproj.sec.SecureRandom
 import org.angproj.sec.util.floorMod
 import kotlin.math.absoluteValue
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -37,8 +37,8 @@ class DivisionSelfProof {
     private val loops = 1
 
     fun generateRanges() {
-        shortBits = SecureRandom.readInt().absoluteValue.floorMod(maxShort)
-        longBits = SecureRandom.readInt().absoluteValue.floorMod(maxLong - shortBits) + shortBits
+        shortBits = Random.nextInt().absoluteValue.floorMod(maxShort)
+        longBits = Random.nextInt().absoluteValue.floorMod(maxLong - shortBits) + shortBits
     }
 
 
@@ -61,8 +61,8 @@ class DivisionSelfProof {
      * */
     @Test
     fun testLongPosDivShortPos(): Unit = repeat(loops) {
-        val bigIntLongPos = BigInt.createEntropyBigInt(longBits).abs()
-        val bigIntShortPos = BigInt.createEntropyBigInt(shortBits)
+        val bigIntLongPos = Sampler.abstractBigInt(longBits).abs()
+        val bigIntShortPos = Sampler.abstractBigInt(shortBits)
 
         val dividend = bigIntLongPos
         val divisor = bigIntShortPos
@@ -75,8 +75,8 @@ class DivisionSelfProof {
      * */
     @Test
     fun testLongPosDivShortNeg(): Unit = repeat(loops) {
-        val bigIntLongPos = BigInt.createEntropyBigInt(longBits).abs()
-        val bigIntShortNeg = BigInt.createEntropyBigInt(shortBits).abs().negate()
+        val bigIntLongPos = Sampler.abstractBigInt(longBits).abs()
+        val bigIntShortNeg = Sampler.abstractBigInt(shortBits).abs().negate()
 
         val dividend = bigIntLongPos
         val divisor = bigIntShortNeg
@@ -89,8 +89,8 @@ class DivisionSelfProof {
      * */
     @Test
     fun testLongNegDivShortPos(): Unit = repeat(loops) {
-        val bigIntLongNeg = BigInt.createEntropyBigInt(longBits).abs().negate()
-        val bigIntShortPos = BigInt.createEntropyBigInt(shortBits).abs()
+        val bigIntLongNeg = Sampler.abstractBigInt(longBits).abs().negate()
+        val bigIntShortPos = Sampler.abstractBigInt(shortBits).abs()
 
         val dividend = bigIntLongNeg
         val divisor = bigIntShortPos
@@ -103,8 +103,8 @@ class DivisionSelfProof {
      * */
     @Test
     fun testLongNegDivShortNeg(): Unit = repeat(loops) {
-        val bigIntLongNeg = BigInt.createEntropyBigInt(longBits).abs().negate()
-        val bigIntShortNeg = BigInt.createEntropyBigInt(shortBits).abs().negate()
+        val bigIntLongNeg = Sampler.abstractBigInt(longBits).abs().negate()
+        val bigIntShortNeg = Sampler.abstractBigInt(shortBits).abs().negate()
 
         val dividend = bigIntLongNeg
         val divisor = bigIntShortNeg
@@ -117,8 +117,8 @@ class DivisionSelfProof {
      * */
     @Test
     fun testShortPosDivLongPos(): Unit = repeat(loops) {
-        val bigIntShortPos = BigInt.createEntropyBigInt(shortBits).abs()
-        val bigIntLongPos = BigInt.createEntropyBigInt(longBits).abs()
+        val bigIntShortPos = Sampler.abstractBigInt(shortBits).abs()
+        val bigIntLongPos = Sampler.abstractBigInt(longBits).abs()
 
         val dividend = bigIntShortPos
         val divisor = bigIntLongPos
@@ -131,8 +131,8 @@ class DivisionSelfProof {
      * */
     @Test
     fun testShortNegDivLongPos(): Unit = repeat(loops) {
-        val bigIntShortNeg = BigInt.createEntropyBigInt(shortBits).abs().negate()
-        val bigIntLongPos = BigInt.createEntropyBigInt(longBits).abs()
+        val bigIntShortNeg = Sampler.abstractBigInt(shortBits).abs().negate()
+        val bigIntLongPos = Sampler.abstractBigInt(longBits).abs()
 
         val dividend = bigIntShortNeg
         val divisor = bigIntLongPos
@@ -145,8 +145,8 @@ class DivisionSelfProof {
      * */
     @Test
     fun testShortPosDivLongNeg(): Unit = repeat(loops) {
-        val bigIntShortPos = BigInt.createEntropyBigInt(shortBits).abs()
-        val bigIntLongNeg = BigInt.createEntropyBigInt(longBits).abs().negate()
+        val bigIntShortPos = Sampler.abstractBigInt(shortBits).abs()
+        val bigIntLongNeg = Sampler.abstractBigInt(longBits).abs().negate()
 
         val dividend = bigIntShortPos
         val divisor = bigIntLongNeg
@@ -159,8 +159,8 @@ class DivisionSelfProof {
      * */
     @Test
     fun testShortNegDivLongNeg(): Unit = repeat(loops) {
-        val bigIntShortNeg = BigInt.createEntropyBigInt(shortBits).abs().negate()
-        val bigIntLongNeg = BigInt.createEntropyBigInt(longBits).abs().negate()
+        val bigIntShortNeg = Sampler.abstractBigInt(shortBits).abs().negate()
+        val bigIntLongNeg = Sampler.abstractBigInt(longBits).abs().negate()
 
         val dividend = bigIntShortNeg
         val divisor = bigIntLongNeg
@@ -174,7 +174,7 @@ class DivisionSelfProof {
     @Test
     fun testZeroDivShortPos(): Unit = repeat(loops) {
         val bigIntZero = BigInt.zero
-        val bigIntShortPos = BigInt.createEntropyBigInt(shortBits).abs()
+        val bigIntShortPos = Sampler.abstractBigInt(shortBits).abs()
 
         val dividend = bigIntZero
         val divisor = bigIntShortPos
@@ -188,7 +188,7 @@ class DivisionSelfProof {
     @Test
     fun testZeroDivShortNeg(): Unit = repeat(loops) {
         val bigIntZero = BigInt.zero
-        val bigIntShortNeg = BigInt.createEntropyBigInt(shortBits).abs().negate()
+        val bigIntShortNeg = Sampler.abstractBigInt(shortBits).abs().negate()
 
         val dividend = bigIntZero
         val divisor = bigIntShortNeg
@@ -201,7 +201,7 @@ class DivisionSelfProof {
      * */
     @Test
     fun testShortPosDivZero(): Unit = repeat(loops) {
-        val bigIntShortPos = BigInt.createEntropyBigInt(shortBits).abs()
+        val bigIntShortPos = Sampler.abstractBigInt(shortBits).abs()
         val bigIntZero = BigInt.zero
 
         val dividend = bigIntShortPos
@@ -215,7 +215,7 @@ class DivisionSelfProof {
      * */
     @Test
     fun testShortNegDivZero(): Unit = repeat(loops) {
-        val bigIntShortNeg = BigInt.createEntropyBigInt(shortBits).abs().negate()
+        val bigIntShortNeg = Sampler.abstractBigInt(shortBits).abs().negate()
         val bigIntZero = BigInt.zero
 
         val dividend = bigIntShortNeg

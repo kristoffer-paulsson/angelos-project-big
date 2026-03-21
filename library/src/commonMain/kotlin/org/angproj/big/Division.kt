@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
+ * Copyright (c) 2023-2026 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
  * This software is available under the terms of the MIT license. Parts are licensed
  * under different terms if stated. The legal terms are attached to the LICENSE file
@@ -24,6 +24,8 @@ import org.angproj.sec.util.ensure
 /**
  * Returns the quotient when this [BigInt] is divided by the [other] [BigInt].
  *
+ * The quotient is rounded towards zero (truncated).
+ *
  * @param other The divisor [BigInt].
  * @return A new [BigInt] representing the quotient.
  * @throws BigMathException if the divisor is zero.
@@ -33,6 +35,8 @@ public operator fun BigInt.div(other: BigInt): BigInt = divide(other)
 /**
  * Returns the remainder when this [BigInt] is divided by the [other] [BigInt].
  *
+ * The sign of the remainder follows the sign of the dividend (this value).
+ *
  * @param other The divisor [BigInt].
  * @return A new [BigInt] representing the remainder.
  * @throws BigMathException if the divisor is zero.
@@ -41,6 +45,8 @@ public operator fun BigInt.rem(other: BigInt): BigInt = remainder(other)
 
 /**
  * Returns the quotient when this [BigInt] is divided by the [value] [BigInt].
+ *
+ * The quotient is rounded towards zero (truncated).
  *
  * @param value The divisor [BigInt].
  * @return A new [BigInt] representing the quotient.
@@ -79,6 +85,7 @@ public fun BigInt.divideAndRemainder(
                 value.sigNum != this.sigNum -> Pair(BigInt.minusOne, BigInt.zero)
                 else -> Pair(BigInt.one, BigInt.zero)
             }
+
             else -> {
                 val qabs = this.abs()
                 val vabs = value.abs()
@@ -87,6 +94,7 @@ public fun BigInt.divideAndRemainder(
                         qabs.mag, qabs.sigNum,
                         vabs.mag, vabs.sigNum
                     )
+
                     else -> divideMagnitude(qabs.mag, vabs.mag)
                 }
                 Pair(
@@ -100,10 +108,6 @@ public fun BigInt.divideAndRemainder(
     }
 }
 
-/**
- * Adaption from Java BigInteger.
- * */
-
 internal fun divideOneWord(
     dividend: IntArray, dividendSig: BigSigned,
     divisor: IntArray, divisorSig: BigSigned
@@ -112,12 +116,14 @@ internal fun divideOneWord(
     val divisorNz = divisor.firstNonzero()
 
     val sorLong = divisor.intGetComp(
-        divisor.lastIndex, divisorSig, divisorNz).longMask()
+        divisor.lastIndex, divisorSig, divisorNz
+    ).longMask()
     val sorInt = sorLong.toInt()
 
     if (dividend.size == 1) {
         val dendValue: Long = dividend.intGetComp(
-            dividend.lastIndex, dividendSig, dividendNz).longMask()
+            dividend.lastIndex, dividendSig, dividendNz
+        ).longMask()
         val q = (dendValue / sorLong)
         val r = (dendValue - q * sorLong)
         return Pair(
@@ -129,7 +135,8 @@ internal fun divideOneWord(
 
     val shift: Int = sorInt.countLeadingZeroBits()
     var rem: Int = dividend.intGetCompUnrev(
-        0, dividendSig, dividendNz)
+        0, dividendSig, dividendNz
+    )
     var remLong = rem.longMask()
     if (remLong < sorLong) {
         quotient[0] = 0
@@ -141,23 +148,17 @@ internal fun divideOneWord(
 
     (dividend.lastIndex downTo 1).forEach { idx ->
         val dendEst = remLong shl Int.SIZE_BITS or dividend.intGetComp(
-            idx - 1, dividendSig, dividendNz).longMask()
-        var q: Int
-        if (dendEst >= 0) {
-            q = (dendEst / sorLong).toInt()
-            rem = (dendEst - q * sorLong).toInt()
-        } else {
-            val tmp = divWord(dendEst, sorInt)
-            q = (tmp and 0xffffffffL).toInt()
-            rem = (tmp ushr Int.SIZE_BITS).toInt()
-        }
-        quotient.intSet(idx - 1, q)
+            idx - 1, dividendSig, dividendNz
+        ).longMask()
+        val tmp = divWord(dendEst, sorLong)
+        rem = (tmp ushr Int.SIZE_BITS).toInt()
+        quotient.intSet(idx - 1, (tmp and 0xffffffffL).toInt())
         remLong = rem.longMask()
     }
 
     return Pair(
         quotient,
-        intArrayOf(if(shift > 0) rem % sorInt else rem)
+        intArrayOf(if (shift > 0) rem % sorInt else rem)
     )
 }
 
@@ -167,16 +168,20 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
     val sorLen = divisor.size
     val sorArr: IntArray = when {
         shift > 0 -> IntArray(divisor.size).also {
-            copyAndShift(divisor, 0, divisor.size, it, 0, shift) }
+            copyAndShift(divisor, 0, divisor.size, it, 0, shift)
+        }
+
         else -> divisor.copyOfRange(0, divisor.size)
     }
     val remArr: IntArray = when {
         shift <= 0 -> IntArray(dividend.size + 1).also { arr ->
             dividend.copyInto(arr, 1, 0, dividend.size)
         }
+
         dividend[0].countLeadingZeroBits() >= shift -> IntArray(dividend.size + 1).also { arr ->
             copyAndShift(dividend, 0, arr.lastIndex, arr, 1, shift)
         }
+
         else -> IntArray(dividend.size + 2).also { arr ->
             var c = 0
             val n2 = Int.SIZE_BITS - shift
@@ -210,14 +215,9 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
             skipCorrection = qrem + -0x80000000 < nh2
         } else {
             val nChunk = nh.toLong() shl Int.SIZE_BITS or nm.longMask()
-            if (nChunk >= 0) {
-                qhat = (nChunk / sorHighLong).toInt()
-                qrem = (nChunk - qhat * sorHighLong).toInt()
-            } else {
-                val tmp = divWord(nChunk, sorHigh)
-                qhat = (tmp and 0xffffffffL).toInt()
-                qrem = (tmp ushr Int.SIZE_BITS).toInt()
-            }
+            val tmp = divWord(nChunk, sorHighLong)
+            qhat = (tmp and 0xffffffffL).toInt()
+            qrem = (tmp ushr Int.SIZE_BITS).toInt()
         }
         if (qhat == 0) return@forEach
         if (!skipCorrection) {
@@ -236,10 +236,22 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
         }
 
         remArr[idx] = 0
-        val borrow = mulSub(remArr, sorArr, qhat, sorLen, idx)
+        var carry: Long = 0
+        (sorLen - 1 downTo 0).forEach { idx2 ->
+            val prod: Long = sorArr[idx2].longMask() * qhat.longMask() + carry
+            val diff = remArr[idx + idx2 + 1] - prod
+            remArr[idx + idx2 + 1] = diff.toInt()
+            carry = (prod ushr Int.SIZE_BITS) + (if ((diff and 0xffffffffL) > (prod.inv() and 0xffffffffL)) 1 else 0)
+        }
+        val borrow = carry.toInt()
 
         if (borrow + -0x80000000 > nh2) {
-            divAdd(sorArr, remArr, idx + 1)
+            carry = 0
+            (sorArr.lastIndex downTo 0).forEach { idx2 ->
+                val sum: Long = sorArr[idx2].longMask() + remArr[idx2 + idx + 1].longMask() + carry
+                remArr[idx2 + idx + 1] = sum.toInt()
+                carry = sum ushr Int.SIZE_BITS
+            }
             qhat--
         }
 
@@ -248,71 +260,42 @@ internal fun divideMagnitude(dividend: IntArray, divisor: IntArray): Pair<IntArr
 
     return Pair(
         quotArr,
-        if (shift > 0) rightShift(remArr, shift) else remArr
+        if (shift > 0) primitiveShift(remArr, shift) else remArr
     )
 }
 
-
-internal fun divWord(n: Long, d: Int): Long {
-    val dLong = d.longMask()
-    var r: Long
-    var q: Long
-    if (dLong == 1L) {
-        q = n.toInt().toLong()
-        r = 0
-        return r shl Int.SIZE_BITS or (q and 0xffffffffL)
+internal fun divWord(dividend: Long, divisor: Long): Long = when {
+    dividend >= 0 -> {
+        val q = (dividend / divisor).toInt()
+        val r = (dividend - q * divisor).toInt()
+        r.toLong() shl Int.SIZE_BITS or q.longMask()
     }
 
-    q = (n ushr 1) / (dLong ushr 1)
-    r = n - q * dLong
+    else -> {
+        var q: Long = (dividend ushr 1) / (divisor ushr 1)
+        var r: Long = dividend - q * divisor
 
-    while (r < 0) {
-        r += dLong
-        q--
-    }
-    while (r >= dLong) {
-        r -= dLong
-        q++
-    }
-    return r shl Int.SIZE_BITS or (q and 0xffffffffL)
-}
+        while (r < 0) {
+            r += divisor
+            q--
+        }
 
-internal fun rightShift(value: IntArray, n: Int): IntArray {
-    if (value.size == 0) return value
-    val nInts = n ushr 5
-    val nBits = n and 0x1F
-    val value2 = value.copyOf(value.size - nInts)
-    if (nBits == 0) return value2
-    val bitsInHighWord = Int.SIZE_BITS - value2[0].countLeadingZeroBits()
-    return if (nBits >= bitsInHighWord) {
-        primitiveLeftShift(value2, Int.SIZE_BITS - nBits).copyOf(value.lastIndex)
-    } else {
-        primitiveRightShift(value2, nBits)
+        r shl Int.SIZE_BITS or (q and 0xffffffffL)
     }
 }
 
-internal fun primitiveRightShift(value: IntArray, n: Int): IntArray {
-    val n2 = Int.SIZE_BITS - n
-    var c = value[value.lastIndex]
-    (value.lastIndex downTo 1).forEach { idx ->
-        val b = c
-        c = value[idx - 1]
-        value[idx] = c shl n2 or (b ushr n)
-    }
-    value[0] = value[0] ushr n
-    return value
-}
-
-internal fun primitiveLeftShift(value: IntArray, n: Int): IntArray {
-    val n2 = Int.SIZE_BITS - n
+internal fun primitiveShift(input: IntArray, n: Int): IntArray {
+    val n2 = Int.SIZE_BITS - (n and 0x1F)
+    val n3 = Int.SIZE_BITS - n2
+    val value = input.copyOf(input.size - (n2 ushr 5))
     var c = value[0]
     (0 until value.lastIndex).forEach { idx ->
         val b = c
         c = value[idx + 1]
-        value[idx] = b shl n or (c ushr n2)
+        value[idx] = b shl n2 or (c ushr n3)
     }
-    value[value.lastIndex] = value[value.lastIndex] shl n
-    return value
+    value[value.lastIndex] = value[value.lastIndex] shl n2
+    return value.copyOf(input.lastIndex)
 }
 
 internal fun copyAndShift(
@@ -328,26 +311,4 @@ internal fun copyAndShift(
         dst[dstFrom + i] = b shl shift or (c ushr n2)
     }
     dst[dstFrom + srcLen - 1] = c shl shift
-}
-
-internal fun mulSub(q: IntArray, a: IntArray, x: Int, len: Int, offset: Int): Int {
-    var carry: Long = 0
-    (len - 1 downTo 0).forEach { idx ->
-        val prod: Long = a[idx].longMask() * x.longMask() + carry
-        val diff = q[offset + idx + 1] - prod
-        q[offset + idx + 1] = diff.toInt()
-        carry = (prod ushr Int.SIZE_BITS) + (
-                if ((diff and 0xffffffffL) > (prod.inv() and 0xffffffffL)) 1 else 0)
-    }
-    return carry.toInt()
-}
-
-internal fun divAdd(a: IntArray, result: IntArray, offset: Int): Int {
-    var carry: Long = 0
-    (a.lastIndex downTo 0).forEach { idx ->
-        val sum: Long = a[idx].longMask() + result[idx + offset].longMask() + carry
-        result[idx + offset] = sum.toInt()
-        carry = sum ushr Int.SIZE_BITS
-    }
-    return carry.toInt()
 }

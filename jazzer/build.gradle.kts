@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.androidLibrary)
 }
 
-group = "org.angproj.big"
-version = "1.0-SNAPSHOT"
 
 kotlin {
     explicitApi()
@@ -18,6 +16,7 @@ kotlin {
     sourceSets {
         jvmMain.dependencies {
             api(project(":library"))
+            implementation(libs.angproj.secrand)
             implementation(libs.kotlin.test)
             implementation(libs.kotlin.jazzer)
             implementation(libs.kotlin.jazzer.api)

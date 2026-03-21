@@ -19,17 +19,23 @@ import org.angproj.sec.util.ensure
 /**
  * Computes the integer square root of this BigInt.
  *
- * @return the integer square root of this BigInt.
- * @throws IllegalArgumentException if this BigInt is negative.
+ * This function uses a binary search algorithm to find the largest integer whose
+ * square is less than or equal to this BigInt.
+ *
+ * @return The integer square root of this BigInt.
+ * @throws BigMathException if this BigInt is negative.
  */
 public fun BigInt.sqrt(): BigInt = sqrtAndRemainder().first
 
 /**
  * Computes the integer square root of this BigInt and the remainder.
  *
- * @return a Pair where the first element is the integer square root of this BigInt,
- *         and the second element is the remainder (this BigInt - (sqrt * sqrt)).
- * @throws IllegalArgumentException if this BigInt is negative.
+ * This function uses a binary search algorithm to find the square root and then
+ * calculates the remainder as (this - (sqrt * sqrt)).
+ *
+ * @return A Pair where the first element is the integer square root of this BigInt,
+ *         and the second element is the remainder (this - (sqrt * sqrt)).
+ * @throws BigMathException if this BigInt is negative.
  */
 public fun BigInt.sqrtAndRemainder(): Pair<BigInt, BigInt> {
     ensure<BigMathException>(this >= BigInt.zero) { BigMathException("Square root of negative BigInt is not supported.") }

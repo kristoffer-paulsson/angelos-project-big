@@ -27,14 +27,18 @@ import kotlin.math.max
 /**
  * Flips the bit at the specified position in this [BigInt].
  *
- * @param pos The position of the bit to flip.
+ * This operation toggles the bit at the specified position (0 becomes 1, 1 becomes 0).
+ * This operation does not modify this BigInt, but returns a new BigInt with the bit flipped.
+ * The position 0 refers to the least significant bit.
+ *
+ * @param pos The position of the bit to flip (0-indexed, where 0 is the least significant bit).
  * @return A new [BigInt] with the specified bit flipped.
  * @throws BigMathException if the position is negative.
  */
 public fun BigInt.flipBit(pos: Int): BigInt = BigInt.innerFlipBit(this.mag, this.sigNum, pos).valueOf()
 
 
-public fun BigInt.Companion.innerFlipBit(x: IntArray, xSig: BigSigned, pos: Int): IntArray {
+internal fun BigInt.Companion.innerFlipBit(x: IntArray, xSig: BigSigned, pos: Int): IntArray {
     ensure(pos >= 0) { BigMathException("Can not flip an imaginary bit at a negative position.") }
 
     val bigCnt = pos.floorDiv(TypeSize.intBits)

@@ -30,6 +30,9 @@ public operator fun BigInt.times(other: BigInt): BigInt = multiply(other)
 /**
  * Multiplies two BigInt values together.
  *
+ * This function performs full arbitrary precision multiplication.
+ * If either operand is zero, the result is zero.
+ *
  * @param value the BigInt to multiply with this BigInt.
  * @return a new BigInt that is the product of this BigInt and the specified BigInt.
  */
@@ -41,7 +44,7 @@ public fun BigInt.multiply(value: BigInt): BigInt = when {
     )
 }
 
-public fun BigInt.Companion.innerMultiply(x: IntArray, y: IntArray): IntArray {
+internal fun BigInt.Companion.innerMultiply(x: IntArray, y: IntArray): IntArray {
     val xRev = x.rev(0)
     val yRev = y.rev(0)
 
@@ -61,7 +64,7 @@ public fun BigInt.Companion.innerMultiply(x: IntArray, y: IntArray): IntArray {
     return z
 }
 
-public fun BigInt.Companion.innerMultiplication(x: IntArray, y: IntArray): IntArray {
+internal fun BigInt.Companion.innerMultiplication(x: IntArray, y: IntArray): IntArray {
     val xRev = x.rev(0)
 
     val z = IntArray(x.size + y.size)

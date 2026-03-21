@@ -28,7 +28,9 @@ import org.angproj.sec.util.TypeSize
 public operator fun BigInt.plus(other: BigInt): BigInt = add(other)
 
 /**
- * Increments the BigInt by one.
+ * Increments this BigInt by one.
+ *
+ * Equivalent to `this + BigInt.one`.
  *
  * @return a new BigInt that is one greater than this BigInt.
  * */
@@ -36,6 +38,8 @@ public operator fun BigInt.inc(): BigInt = add(BigInt.one)
 
 /**
  * Adds two BigInt values together.
+ *
+ * This function performs full arbitrary precision addition.
  *
  * @param value the BigInt to add to this BigInt.
  * @return a new BigInt that is the sum of this BigInt and the specified BigInt.
@@ -52,7 +56,7 @@ public fun BigInt.add(value: BigInt): BigInt = when {
     }
 }
 
-public fun BigInt.Companion.innerAdd(
+internal fun BigInt.Companion.innerAdd(
     x: IntArray, xSig: BigSigned, y: IntArray, ySig: BigSigned
 ): IntArray {
     val xnz = x.firstNonzero()

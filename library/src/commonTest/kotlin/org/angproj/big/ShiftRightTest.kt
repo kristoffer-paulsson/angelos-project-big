@@ -14,6 +14,7 @@
  */
 package org.angproj.big
 
+import org.angproj.sec.util.Octet.asHexSymbols
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -23,7 +24,7 @@ class ShiftRightTest {
 
     @Test
     fun testShiftRight() {
-        var number = BigInt.createEntropyBigInt(256)
+        var number = Sampler.abstractBigInt(256)
 
         // Validate that shiftRight works
         assertEquals(number.shiftRight(1), number shr 1)
@@ -43,7 +44,7 @@ class ShiftRightTest {
      * */
     @Test
     fun testShr() {
-        var number = BigInt.createEntropyBigInt(256)
+        var number = Sampler.abstractBigInt(256)
 
         // Validate that shr works
         assertEquals(number shr 1, number.shiftRight(1))
@@ -57,7 +58,7 @@ class ShiftRightTest {
         assertEquals(number shr -1, number.shiftLeft(1))
 
         // Validate that shr works with SecureRandom
-        val secureNumber = BigInt.createEntropyBigInt(256)
+        val secureNumber = Sampler.abstractBigInt(256)
         assertEquals(secureNumber shr 1, secureNumber.shiftRight(1))
     }
 
@@ -66,7 +67,7 @@ class ShiftRightTest {
      * */
     @Test
     fun testPosIfZero() {
-        val number = BigInt.createEntropyBigInt(256)
+        val number = Sampler.abstractBigInt(256)
 
         assertSame(number, number.shiftRight(0))
         assertContentEquals(number.toByteArray(), number.shiftRight(0).toByteArray())
@@ -79,5 +80,18 @@ class ShiftRightTest {
     fun testMagnitudeIfZero() {
         assertSame(BigInt.zero, BigInt.zero.shiftRight(53))
         assertContentEquals(BigInt.zero.toByteArray(), BigInt.zero.shiftRight(53).toByteArray())
+    }
+
+    @Test
+    fun testArbitraryRightShift() {
+        val fuzz = listOf(
+            Triple("ff260a0aff260a0abb2727272727", 42, "c98282bfc98282ae")
+        )
+
+        fuzz.forEach {
+            val result = bigIntOf(it.first.fromHexSymbols()).shiftRight(it.second).toByteArray()
+            //println(result.asHexSymbols())
+            assertEquals(result.asHexSymbols(), it.third)
+        }
     }
 }

@@ -1,13 +1,3 @@
-package org.angproj.big
-
-import java.lang.NumberFormatException
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-
-import java.math.BigInteger as JavaBigInteger
-
 /**
  * Copyright (c) 2024 by Kristoffer Paulsson <kristoffer.paulsson@talenten.se>.
  *
@@ -22,6 +12,17 @@ import java.math.BigInteger as JavaBigInteger
  * Contributors:
  *      Kristoffer Paulsson - initial implementation
  */
+package org.angproj.big
+
+import java.lang.NumberFormatException
+import kotlin.test.Test
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+
+import java.math.BigInteger as JavaBigInteger
+
+
 class BigIntToJavaTest {
 
     /**
