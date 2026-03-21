@@ -3,7 +3,42 @@
 [![Coverage Status](https://coveralls.io/repos/github/angelos-project/angelos-project-big/badge.svg?branch=master)](https://coveralls.io/github/angelos-project/angelos-project-big?branch=master)
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/angelos-project/angelos-project-big/tree/master.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/angelos-project/angelos-project-big/tree/master)
 
-A high-quality arbitrary-precision big integer library implemented in pure Kotlin/Common for effective multiplatform support.
+A high-quality arbitrary-precision big integer library implemented in pure Kotlin/Common for multiplatform support.
+
+#### Core Classes
+- **BigInt**: Central big integer class holding magnitude and sign
+- **BigMathException**: Replacement for NumberFormatException and ArithmeticException
+- **BigSigned**: Sign helper class
+- **BigCompare**: Comparison helper class
+
+#### Arithmetic Operations
+- **Addition**
+- **Subtraction**
+- **Multiplication**
+- **Division**: With quotient and remainder
+- **Mod**
+- **Gcd**
+- **Pow**
+- **SquareRoot**: With root and remainder
+
+#### Bitwise Operations
+- **testBit**: Check bit
+- **setBit**: Set bit to true
+- **clearBit**: Set bit to false
+- **flipBit**: Toggle a bit opposite
+- **shl**: Shift bits left
+- **shr**: Shift bits right
+- **and**
+- **or**
+- **xor**
+- **not**
+- **andNot**
+
+#### Conversion & Utilities
+- **Hex**: Helper for import of hexadecimal numbers
+- **ExportImportBigInt**: Export and import utilities
+- **LoadAndSaveBigInt**: Load and save utilities
+- **Unsigned**: Helper for importing unsigned integers
 
 It covers all necessary features for descent cryptographic use such as implementing ECDSA (not included).
 
