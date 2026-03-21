@@ -194,9 +194,11 @@ commands:
           command: ./gradlew dokkaGenerateHtml --no-daemon --stacktrace
   store_docs:
     steps:
+      - run:
+          name: Archive Dokka Docs
+          command: tar -czvf apidocs.tar.gz -C library/build/dokka/html .
       - store_artifacts:
-          path: library/build/dokka/html
-          destination: documentation
+          path: apidocs.tar.gz
   prepare:
     steps:
       - checkout
